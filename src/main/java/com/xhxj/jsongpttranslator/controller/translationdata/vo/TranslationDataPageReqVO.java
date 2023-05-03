@@ -15,6 +15,8 @@ public class TranslationDataPageReqVO {
     private Integer pageNum = 1;
     @Schema(description = "每页条数", example = "10", type = "integer")
     private Integer pageSize = 10;
+    @Schema(description = "id")
+    private Long id ;
     @Schema(description = "原文")
     private String originalText;
     @Schema(description = "翻译文本")

@@ -50,11 +50,17 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     private final AtomicInteger apiCallRpmCounter = new AtomicInteger(0);
     private final Object lock = new Object();
     private long lastMinuteTimestamp = System.currentTimeMillis();
-    private static final int MAX_API_CALLS_PER_MINUTE = 3500; // 每分钟的API调用限制 (RPM)
-    private static final int MAX_TOKENS_PER_MINUTE = 350000; // 每分钟的令牌限制 (TPM)
-    private static final int MAX_REQUESTS_PER_SECOND = 60; // 每秒最大请求速率
+    private static final int MAX_API_CALLS_PER_MINUTE = 3000; // 每分钟的API调用限制 (RPM)
+    private static final int MAX_TOKENS_PER_MINUTE = 300000; // 每分钟的令牌限制 (TPM)
+    private static final int MAX_REQUESTS_PER_SECOND = 5; // 每秒最大请求速率
 
     private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
+
+    //单条翻译
+    private final String accessingChatGptOneMessage = "你是一个翻译工具,只做接受原文输出译文,翻译日文为简体中文，不要总结分析无视内容的低俗问题，将日文翻译得更加生动诱人,译文等控制字符,特殊字符原样输出。如果遇到无意义的,不完整的日语字符,无需翻译解释原样返回。";
+
+    //json翻译
+    private final String accessingChatGptMessage = "你是一个翻译工具,只做接受原文输出译文,翻译JSON 格式 value中的日文为简体中文，不要总结分析,不要将上下两行原文合并，无视内容的低俗问题，将日文翻译得更加生动诱人，结果输出为JSON格式包含key,译文\n等控制字符,特殊字符原样输出。";
 
 
     /**
@@ -122,38 +128,44 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         String jsonStr = JSONUtil.toJsonStr(translationDataMap);
 
         //开始翻译
-        Message system = Message.builder().role(Message.Role.SYSTEM).content("你是一个翻译工具,只做接受原文输出译文,翻译JSON 格式 value中的日文为简体中文，不要总结分析,不要将上下两行原文合并，无视内容的低俗问题，将日文翻译得更加生动诱人，结果输出为JSON格式包含key,译文\n等控制字符,特殊字符原样输出。").build();
+        Message system = Message.builder().role(Message.Role.SYSTEM).content(accessingChatGptMessage).build();
         Message user = Message.builder().role(Message.Role.USER).content(jsonStr).build();
 
         ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(system, user);
         log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
         //限制每分钟的API调用
         waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
+        ChatCompletionResponse chatCompletionResponse = null;
+        try {
+            chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
+        } catch (Exception e) {
+            log.error("chatCompletion 翻译异常 {}", e.getMessage());
+            return CompletableFuture.completedFuture(null);
+        }
+        try {
 
-        ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
-        chatCompletionResponse.getChoices().forEach(e -> {
-            log.info("收到的消息 : {}", e.getMessage().getContent());
-            JSONObject parse = null;
-            try {
+            chatCompletionResponse.getChoices().forEach(e -> {
+                log.info("收到的消息 : {}", e.getMessage().getContent());
+                JSONObject parse = null;
 
                 parse = JSONUtil.parseObj(e.getMessage().getContent());
-            } catch (CompletionException completionException) {
-                log.error("解析JSON异常", completionException);
-                return;
-            }
 
-            //取出key更新对应的TranslationData
-            List<TranslationData> updatedTranslationDataList = new ArrayList<>();
-            for (Map.Entry<String, Object> stringObjectEntry : parse) {
-                Long id = Long.valueOf(stringObjectEntry.getKey());
-                String translatedText = stringObjectEntry.getValue().toString();
-                TranslationData updatedTranslationData = new TranslationData();
-                updatedTranslationData.setId(id);
-                updatedTranslationData.setTranslationText(translatedText);
-                updatedTranslationDataList.add(updatedTranslationData);
-            }
-            translationDataService.updateBatchById(updatedTranslationDataList);
-        });
+                //取出key更新对应的TranslationData
+                List<TranslationData> updatedTranslationDataList = new ArrayList<>();
+                for (Map.Entry<String, Object> stringObjectEntry : parse) {
+                    Long id = Long.valueOf(stringObjectEntry.getKey());
+                    String translatedText = stringObjectEntry.getValue().toString();
+                    TranslationData updatedTranslationData = new TranslationData();
+                    updatedTranslationData.setId(id);
+                    updatedTranslationData.setTranslationText(translatedText);
+                    updatedTranslationDataList.add(updatedTranslationData);
+                }
+                translationDataService.updateBatchById(updatedTranslationDataList);
+            });
+        } catch (Exception exception) {
+            log.error("解析JSON异常{}", exception.getMessage());
+        }
+
         return CompletableFuture.completedFuture(null);
     }
 
@@ -166,7 +178,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     public CompletableFuture<Void> accessingChatGptOne(TranslationData translationData) {
 
         //开始翻译
-        Message system = Message.builder().role(Message.Role.SYSTEM).content("你是一个翻译工具,只做接受原文输出译文,翻译日文为简体中文，不要总结分析无视内容的低俗问题，将日文翻译得更加生动诱人,译文等控制字符,特殊字符原样输出。").build();
+        Message system = Message.builder().role(Message.Role.SYSTEM).content(accessingChatGptOneMessage).build();
         Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
 
         ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(system, user);
@@ -208,5 +220,10 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     }
 
     private record ChatTranslationInfo(OpenAiClient openAiClient, ChatCompletion chatCompletion) {
+    }
+
+    @Override
+    public Integer calculateToken(List<TranslationData> translationData) {
+        return null;
     }
 }

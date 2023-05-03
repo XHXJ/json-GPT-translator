@@ -1,5 +1,6 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
+import com.unfbx.chatgpt.entity.chat.Message;
 import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface ChatGptTranslationAsyncService {
      * @param translationData
      */
     CompletableFuture<Void> accessingChatGptOne(TranslationData translationData);
+
+    Integer calculateToken(List<TranslationData> translationData);
 }

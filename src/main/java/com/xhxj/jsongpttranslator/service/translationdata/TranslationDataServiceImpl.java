@@ -30,7 +30,9 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     @Override
     public IPage<TranslationData> page(TranslationDataPageReqVO translationDataPageReqVO) {
         LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
-        wrapper.isNotNull(BooleanUtils.toBoolean(translationDataPageReqVO.getIsTranslation()), TranslationData::getTranslationText)
+        wrapper
+                .eq(translationDataPageReqVO.getId() != null, TranslationData::getId, translationDataPageReqVO.getId())
+                .isNotNull(BooleanUtils.toBoolean(translationDataPageReqVO.getIsTranslation()), TranslationData::getTranslationText)
                 .like(StringUtils.isNotBlank(translationDataPageReqVO.getOriginalText()), TranslationData::getOriginalText, translationDataPageReqVO.getOriginalText())
                 .like(StringUtils.isNotBlank(translationDataPageReqVO.getTranslationText()), TranslationData::getTranslationText, translationDataPageReqVO.getTranslationText())
         ;
