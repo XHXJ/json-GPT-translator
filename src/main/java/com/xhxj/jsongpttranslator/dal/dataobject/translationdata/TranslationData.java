@@ -1,4 +1,4 @@
-package com.xhxj.jsongpttranslator.dal.dataobject;
+package com.xhxj.jsongpttranslator.dal.dataobject.translationdata;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @author:luoshuzhong
@@ -16,7 +18,7 @@ import lombok.Data;
 @KeySequence("distribution_amount_seq")
 @Data
 @Schema(name = "ManualTransFileJson", description = "ManualTransFile.json实体类对象")
-public class TranslationData {
+public class TranslationData implements Serializable {
     @TableId(type = IdType.AUTO)
     @Schema(description = "主键ID")
     private Long id;

@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataPageReqVO;
-import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
 import com.xhxj.jsongpttranslator.dal.hsqldb.TranslationDataMapper;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,5 +58,19 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 导出翻译好的json
+     *
+     * @return json字符串
+     */
+    @Override
+    public String exportJson() {
+        List<TranslationData> translationData = this.baseMapper.selectList(new LambdaQueryWrapper<TranslationData>().isNotNull(TranslationData::getTranslationText));
+        //将list转换为json
+        JSONObject json = JSONUtil.createObj();
+        translationData.forEach(o -> json.set(o.getOriginalText(), o.getTranslationText()));
+        return json.toString();
     }
 }

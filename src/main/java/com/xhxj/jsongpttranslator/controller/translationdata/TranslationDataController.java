@@ -2,17 +2,21 @@ package com.xhxj.jsongpttranslator.controller.translationdata;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataPageReqVO;
-import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author:luoshuzhong
@@ -47,5 +51,28 @@ public class TranslationDataController {
             @RequestPart(value = "file") final MultipartFile file) {
         return translationDataService.readJsonFile(file);
     }
+
+    @PostMapping("/export-json")
+    @Operation(summary = "导出翻译后的json文件")
+    public void exportJson(HttpServletResponse response) {
+        try {
+            // 获取翻译后的 JSON 字符串
+            String translatedJson = translationDataService.exportJson();
+
+            // 设置响应头以指示浏览器下载文件
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; filename=translated.json");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+            // 将文件内容写入响应
+            response.getWriter().write(translatedJson);
+            response.getWriter().flush();
+            response.getWriter().close();
+        } catch (IOException e) {
+            // 处理异常，例如记录错误或返回错误响应
+            e.printStackTrace();
+        }
+    }
+
 
 }

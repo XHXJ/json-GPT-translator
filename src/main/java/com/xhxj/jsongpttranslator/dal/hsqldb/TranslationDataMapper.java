@@ -1,7 +1,7 @@
 package com.xhxj.jsongpttranslator.dal.hsqldb;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;

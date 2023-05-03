@@ -1,4 +1,4 @@
-package com.xhxj.jsongpttranslator.framework.mybatis.config;
+package com.xhxj.jsongpttranslator.framework.mybatis;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

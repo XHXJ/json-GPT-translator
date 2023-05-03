@@ -1,4 +1,4 @@
-package com.xhxj.jsongpttranslator.framework.mybatis.config;
+package com.xhxj.jsongpttranslator.framework.mybatis;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
