@@ -60,7 +60,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
 
             List<TranslationData> list3 = translationDataService.list(wrapper2);
             //如果还有未被翻译的句子，就单条去翻译
-            log.info("第二次处理漏翻,还有{}条句子未被翻译", list2.size());
+            log.info("第二次处理漏翻,还有{}条句子未被翻译", list3.size());
             if (list3.size() > 0) {
                 List<CompletableFuture<Void>> task = new ArrayList<>(list3.size());
                 for (TranslationData translationData : list3) {

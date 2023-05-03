@@ -1,6 +1,6 @@
 package com.xhxj.jsongpttranslator;
 
-import com.xhxj.jsongpttranslator.framework.chatgpt.OpenaiProperties;
+import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties.OpenaiProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.xhxj.jsongpttranslator.dal.hsqldb")
 @EnableAsync
 @EnableScheduling
-@EnableConfigurationProperties(OpenaiProperties.class)
 public class JsonGptTranslatorApplication {
 
     public static void main(String[] args) {

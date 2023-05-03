@@ -11,7 +11,8 @@ import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
-import com.xhxj.jsongpttranslator.framework.chatgpt.OpenaiProperties;
+import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties.OpenaiProperties;
+import com.xhxj.jsongpttranslator.service.OpenaiProperties.OpenaiPropertiesService;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -38,11 +39,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsyncService {
 
-    @Autowired
-    private OpenaiProperties openaiProperties;
 
     @Autowired
     private TranslationDataService translationDataService;
+
+    @Autowired
+    private OpenaiPropertiesService openaiPropertiesService;
 
     private final AtomicInteger apiCallCounter = new AtomicInteger(0);
     private final AtomicInteger apiCallRpmCounter = new AtomicInteger(0);
@@ -91,6 +93,18 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     }
 
     /**
+     * 获得openaikey
+     */
+    private List<String> getOpenaiKey() {
+        List<OpenaiProperties> openaiPropertiesList = openaiPropertiesService.list();
+        if (openaiPropertiesList.isEmpty()) {
+            throw new RuntimeException("请先配置openai的key");
+        }
+        return openaiPropertiesList.stream().map(OpenaiProperties::getKey).collect(Collectors.toList());
+    }
+
+
+    /**
      * 报告当前api限制计数器
      */
     @Scheduled(fixedRate = 10000)
@@ -119,7 +133,14 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
         chatCompletionResponse.getChoices().forEach(e -> {
             log.info("收到的消息 : {}", e.getMessage().getContent());
-            JSONObject parse = JSONUtil.parseObj(e.getMessage().getContent());
+            JSONObject parse = null;
+            try {
+
+                parse = JSONUtil.parseObj(e.getMessage().getContent());
+            } catch (CompletionException completionException) {
+                log.error("解析JSON异常", completionException);
+                return;
+            }
 
             //取出key更新对应的TranslationData
             List<TranslationData> updatedTranslationDataList = new ArrayList<>();
@@ -175,7 +196,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
                 .readTimeout(360, TimeUnit.SECONDS)//自定义超时时间
                 .build();
         //构建客户端
-        OpenAiClient openAiClient = OpenAiClient.builder().apiKey(Arrays.asList(openaiProperties.getApiKey()))
+        OpenAiClient openAiClient = OpenAiClient.builder().apiKey(getOpenaiKey())
                 //自定义key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy()).okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
