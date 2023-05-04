@@ -20,12 +20,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -50,9 +48,9 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     private final AtomicInteger apiCallRpmCounter = new AtomicInteger(0);
     private final Object lock = new Object();
     private long lastMinuteTimestamp = System.currentTimeMillis();
-    private static final int MAX_API_CALLS_PER_MINUTE = 3000; // 每分钟的API调用限制 (RPM)
-    private static final int MAX_TOKENS_PER_MINUTE = 300000; // 每分钟的令牌限制 (TPM)
-    private static final int MAX_REQUESTS_PER_SECOND = 5; // 每秒最大请求速率
+    private static int MAX_API_CALLS_PER_MINUTE = 3000; // 每分钟的API调用限制 (RPM)
+    private static int MAX_TOKENS_PER_MINUTE = 300000; // 每分钟的令牌限制 (TPM)
+    private static int MAX_REQUESTS_PER_SECOND = 5; // 每秒最大请求速率
 
     private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
 
@@ -62,6 +60,30 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     //json翻译
     private final String accessingChatGptMessage = "你是一个翻译工具,只做接受原文输出译文,翻译JSON 格式 value中的日文为简体中文，不要总结分析,不要将上下两行原文合并，无视内容的低俗问题，将日文翻译得更加生动诱人，结果输出为JSON格式包含key,译文\n等控制字符,特殊字符原样输出。";
 
+    /**
+     * 获得openaikey
+     */
+    private List<String> getOpenaiKey() {
+        List<OpenaiProperties> openaiPropertiesList = openaiPropertiesService.list();
+        if (openaiPropertiesList.isEmpty()) {
+            throw new RuntimeException("请先配置openai的key");
+        }
+        apiRestrictionSettings(openaiPropertiesList.size());
+
+        return openaiPropertiesList.stream().map(OpenaiProperties::getKey).collect(Collectors.toList());
+    }
+
+    /**
+     * api限制设置
+     *
+     * @param size key的数量
+     */
+    private static void apiRestrictionSettings(int size) {
+        //设置翻译api的调用限制为key的数量倍数
+        MAX_API_CALLS_PER_MINUTE = size * 3000;
+        MAX_TOKENS_PER_MINUTE = size * 300000;
+        MAX_REQUESTS_PER_SECOND = size * 5;
+    }
 
     /**
      * 限制每分钟的API调用
@@ -98,22 +120,11 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         }
     }
 
-    /**
-     * 获得openaikey
-     */
-    private List<String> getOpenaiKey() {
-        List<OpenaiProperties> openaiPropertiesList = openaiPropertiesService.list();
-        if (openaiPropertiesList.isEmpty()) {
-            throw new RuntimeException("请先配置openai的key");
-        }
-        return openaiPropertiesList.stream().map(OpenaiProperties::getKey).collect(Collectors.toList());
-    }
-
 
     /**
      * 报告当前api限制计数器
      */
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 10000)
     @Override
     public void reportCurrentApiLimitCounters() {
         log.info("当前API限制计数器: {}", apiCallCounter.get());
@@ -123,6 +134,38 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     @Override
     public CompletableFuture<Objects> accessingChatGpt(List<TranslationData> translationData) {
 
+        //构建请求信息
+        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(getMessages(translationData));
+        log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
+        //限制每分钟的API调用
+        waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
+        ChatCompletionResponse chatCompletionResponse = null;
+
+        chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            log.info("收到的消息 : {}", e.getMessage().getContent());
+            JSONObject parse = null;
+
+            parse = JSONUtil.parseObj(e.getMessage().getContent());
+
+            //取出key更新对应的TranslationData
+            List<TranslationData> updatedTranslationDataList = new ArrayList<>();
+            for (Map.Entry<String, Object> stringObjectEntry : parse) {
+                Long id = Long.valueOf(stringObjectEntry.getKey());
+                String translatedText = stringObjectEntry.getValue().toString();
+                TranslationData updatedTranslationData = new TranslationData();
+                updatedTranslationData.setId(id);
+                updatedTranslationData.setTranslationText(translatedText);
+                updatedTranslationDataList.add(updatedTranslationData);
+            }
+            translationDataService.updateBatchById(updatedTranslationDataList);
+        });
+
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @NotNull
+    private List<Message> getMessages(List<TranslationData> translationData) {
         //将对象转换为Map
         Map<Long, String> translationDataMap = translationData.stream().collect(Collectors.toMap(TranslationData::getId, TranslationData::getOriginalText));
         String jsonStr = JSONUtil.toJsonStr(translationDataMap);
@@ -131,42 +174,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         Message system = Message.builder().role(Message.Role.SYSTEM).content(accessingChatGptMessage).build();
         Message user = Message.builder().role(Message.Role.USER).content(jsonStr).build();
 
-        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(system, user);
-        log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
-        //限制每分钟的API调用
-        waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
-        ChatCompletionResponse chatCompletionResponse = null;
-        try {
-            chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
-        } catch (Exception e) {
-            log.error("chatCompletion 翻译异常 {}", e.getMessage());
-            return CompletableFuture.completedFuture(null);
-        }
-        try {
-
-            chatCompletionResponse.getChoices().forEach(e -> {
-                log.info("收到的消息 : {}", e.getMessage().getContent());
-                JSONObject parse = null;
-
-                parse = JSONUtil.parseObj(e.getMessage().getContent());
-
-                //取出key更新对应的TranslationData
-                List<TranslationData> updatedTranslationDataList = new ArrayList<>();
-                for (Map.Entry<String, Object> stringObjectEntry : parse) {
-                    Long id = Long.valueOf(stringObjectEntry.getKey());
-                    String translatedText = stringObjectEntry.getValue().toString();
-                    TranslationData updatedTranslationData = new TranslationData();
-                    updatedTranslationData.setId(id);
-                    updatedTranslationData.setTranslationText(translatedText);
-                    updatedTranslationDataList.add(updatedTranslationData);
-                }
-                translationDataService.updateBatchById(updatedTranslationDataList);
-            });
-        } catch (Exception exception) {
-            log.error("解析JSON异常{}", exception.getMessage());
-        }
-
-        return CompletableFuture.completedFuture(null);
+        return Arrays.asList(system, user);
     }
 
     /**
@@ -174,6 +182,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
      *
      * @param translationData
      */
+    @Async("chatGptTaskExecutor")
     @Override
     public CompletableFuture<Void> accessingChatGptOne(TranslationData translationData) {
 
@@ -181,7 +190,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         Message system = Message.builder().role(Message.Role.SYSTEM).content(accessingChatGptOneMessage).build();
         Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
 
-        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(system, user);
+        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(Arrays.asList(system, user));
         log.info("翻译单独句子id {} ,消耗tokens :{}", translationData.getId(), chatTranslationInfo.chatCompletion().tokens());
         //限制每分钟的API调用
         waitForApiCallAvailability(chatTranslationInfo.chatCompletion().tokens());
@@ -196,7 +205,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     }
 
     @NotNull
-    private ChatTranslationInfo getChatTranslationInfo(Message system, Message user) {
+    private ChatTranslationInfo getChatTranslationInfo(List<Message> messages) {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -210,12 +219,13 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         //构建客户端
         OpenAiClient openAiClient = OpenAiClient.builder().apiKey(getOpenaiKey())
                 //自定义key的获取策略：默认KeyRandomStrategy
-                .keyStrategy(new KeyRandomStrategy()).okHttpClient(okHttpClient)
+                .keyStrategy(new KeyRandomStrategy())
+                .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
         //聊天模型：gpt-3.5
-        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(system, user)).build();
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
         return new ChatTranslationInfo(openAiClient, chatCompletion);
     }
 
@@ -223,7 +233,8 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     }
 
     @Override
-    public Integer calculateToken(List<TranslationData> translationData) {
-        return null;
+    public Long calculateToken(List<TranslationData> translationData) {
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(getMessages(translationData)).build();
+        return chatCompletion.tokens();
     }
 }

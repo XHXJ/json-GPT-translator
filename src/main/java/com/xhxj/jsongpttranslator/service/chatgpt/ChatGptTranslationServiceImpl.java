@@ -1,12 +1,10 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.unfbx.chatgpt.entity.chat.ChatCompletion;
-import com.unfbx.chatgpt.utils.TikTokensUtil;
 import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
+import com.xhxj.jsongpttranslator.framework.async.ChatGptAsyncConfig;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.IntStream;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -36,6 +33,16 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     //程序开始的唯一标识符
     private final AtomicBoolean startFlag = new AtomicBoolean(false);
 
+    /**
+     * 停止程序
+     */
+    @Override
+    public void stop() {
+        startFlag.set(false);
+        //重启线程池
+        log.info("程序已经停止");
+    }
+
     @Override
     @Async("taskExecutor")
     public void start() {
@@ -45,29 +52,32 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
         }
         long startTime = System.currentTimeMillis(); // 记录开始时间
         try {
-            log.info("程序开始启动");
+            log.info("程序开始");
             //查询需要翻译的句子
             LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
             wrapper.isNull(TranslationData::getTranslationText);
-            List<TranslationData> list = translationDataService.list(wrapper);
+            do {
+                List<TranslationData> multipleSentences = translationDataService.list(wrapper);
+                log.info("还有{}条句子未被翻译", multipleSentences.size());
+                //未翻译的句子小于200条
+                if (multipleSentences.size() < 50) {
+                    break;
+                }
+                runBatchTranslation(multipleSentences);
+            } while (true);
 
-            afterSplittingTheList(list);
 
-            //查询还未被翻译的句子
-            LambdaQueryWrapper<TranslationData> wrapper2 = new LambdaQueryWrapper<>();
-            wrapper2.isNull(TranslationData::getTranslationText);
-            List<TranslationData> list2 = translationDataService.list(wrapper2);
-            log.info("第一次处理漏翻,还有{}条句子未被翻译", list2.size());
-            //去单条翻译未被翻译的句子
-            afterSplittingTheList(list2);
-
-            List<TranslationData> list3 = translationDataService.list(wrapper2);
-            //如果还有未被翻译的句子，就单条去翻译
-            log.info("单条漏翻处理,还有{}条句子未被翻译", list3.size());
-            if (list3.size() > 0) {
+            do {
+                //翻译完所有的句子
+                List<TranslationData> singleSentence = translationDataService.list(wrapper);
+                //如果还有未被翻译的句子，就单条去翻译
+                log.info("单条漏翻处理,还有{}条句子未被翻译", singleSentence.size());
+                if (singleSentence.size() == 0) {
+                    return;
+                }
                 try {
-                    List<CompletableFuture<Void>> task = new ArrayList<>(list3.size());
-                    for (TranslationData translationData : list3) {
+                    List<CompletableFuture<Void>> task = new ArrayList<>(singleSentence.size());
+                    for (TranslationData translationData : singleSentence) {
                         task.add(chatGptTranslationAsyncService.accessingChatGptOne(translationData));
                     }
                     //等待所有任务完成
@@ -75,7 +85,8 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                 } catch (Exception e) {
                     log.error("单条翻译出错 {}", e.getMessage());
                 }
-            }
+            } while (true);
+
 
         } catch (Exception e) {
             log.error("程序运行出错 {}", e.getMessage());
@@ -89,13 +100,14 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     }
 
     /**
+     * 运行批量翻译
+     *
      * @param list
      */
-    private void afterSplittingTheList(List<TranslationData> list) {
+    private void runBatchTranslation(List<TranslationData> list) {
         try {
-            // 批次大小为 50
-            int batchSize = 30;
-            List<List<TranslationData>> batchList = splitList(list, batchSize);
+
+            List<List<TranslationData>> batchList = splitList(list);
 
             List<CompletableFuture<Objects>> task = new ArrayList<>(batchList.size());
             for (List<TranslationData> translationData : batchList) {
@@ -104,21 +116,45 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             //等待所有任务完成
             CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
         } catch (Exception e) {
-            log.error("批量翻译出错 {}", e.getMessage());
+            log.error("批量翻译异常 {}", e.getMessage());
         }
     }
 
-    private List<List<TranslationData>> splitList(List<TranslationData> list, int batchSize) {
+    /**
+     * 分割list
+     *
+     * @param list 待分割的list
+     * @return 分割后的list
+     */
+    private List<List<TranslationData>> splitList(List<TranslationData> list) {
+        List<List<TranslationData>> resultList = new ArrayList<>();
+        //翻译基准线
+        int batchSize = 20;
 
+        int index = 0;
+        while (index < list.size()) {
+            long totalTokens;
+            int retryCount = 0; // 添加重试计数器
+            do {
+                totalTokens = chatGptTranslationAsyncService.calculateToken(list.subList(index, Math.min(index + batchSize, list.size())));
 
-        return IntStream.range(0, (list.size() + batchSize - 1) / batchSize).mapToObj(i -> {
-            List<TranslationData> translationData = list.subList(i * batchSize, Math.min((i + 1) * batchSize, list.size()));
-            //计算token
-            Integer integer = chatGptTranslationAsyncService.calculateToken(translationData);
-            //如果token小于2000,则需要分更多的批次
-            return translationData;
-        }).toList();
+                if (totalTokens < 1500 && index + batchSize < list.size()) {
+                    batchSize ++;
+                } else if (totalTokens > 1900) {
+                    batchSize --;
+                } else {
+                    break; // 当 totalTokens 在 1500-2000 之间时，跳出循环
+                }
+
+                retryCount++; // 每次循环都增加重试计数器
+            } while (retryCount < 20); // 当重试次数达到20次时，跳出循环
+
+            List<TranslationData> batch = list.subList(index, Math.min(index + batchSize, list.size()));
+            resultList.add(batch);
+            index += batchSize;
+        }
+
+        return resultList;
     }
-
 
 }

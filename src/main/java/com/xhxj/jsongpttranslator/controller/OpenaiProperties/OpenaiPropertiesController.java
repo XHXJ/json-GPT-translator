@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 /**
  * @author:zdthm2010@gmail.com
  * @create: 2023-05-03 17:02
@@ -28,9 +30,11 @@ public class OpenaiPropertiesController {
     @PostMapping("/upload-key")
     @Operation(summary = "上传openai的key")
     public String uploadKey(@RequestBody OpenaiPropertiesVO key) {
-        OpenaiProperties openaiProperties = new OpenaiProperties();
-        openaiProperties.setKey(key.getKey());
-        openaiPropertiesService.save(openaiProperties);
-        return "key设置成功: " + key.getKey();
+        for (String s : key.getKey()) {
+            OpenaiProperties openaiProperties = new OpenaiProperties();
+            openaiProperties.setKey(s);
+            openaiPropertiesService.save(openaiProperties);
+        }
+        return "key设置成功: " + Arrays.toString(key.getKey());
     }
 }

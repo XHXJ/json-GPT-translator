@@ -18,5 +18,10 @@ public interface ChatGptTranslationAsyncService {
      */
     CompletableFuture<Void> accessingChatGptOne(TranslationData translationData);
 
-    Integer calculateToken(List<TranslationData> translationData);
+    /**
+     * 获取token
+     * @param translationData
+     * @return
+     */
+    Long calculateToken(List<TranslationData> translationData);
 }

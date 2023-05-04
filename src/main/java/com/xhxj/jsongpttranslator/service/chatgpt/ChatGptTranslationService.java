@@ -6,4 +6,9 @@ public interface ChatGptTranslationService {
      */
     void start();
 
+    /**
+     * 停止翻译
+     */
+    void stop();
+
 }

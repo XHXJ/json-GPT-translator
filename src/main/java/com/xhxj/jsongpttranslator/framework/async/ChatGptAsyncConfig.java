@@ -20,8 +20,8 @@ public class ChatGptAsyncConfig implements AsyncConfigurer {
     @Bean
     public Executor chatGptTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(30);
+        executor.setCorePoolSize(40);
+        executor.setMaxPoolSize(60);
         executor.setQueueCapacity(1000);
         executor.setThreadNamePrefix("ChatGpt-");
         executor.initialize();

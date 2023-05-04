@@ -12,5 +12,5 @@ import lombok.Data;
 @Schema(name = "OpenaiPropertiesVO", description = "OpenaiPropertiesVO实体类对象")
 public class OpenaiPropertiesVO {
     @Schema(description = "openai的key")
-    private String key;
+    private String[] key;
 }

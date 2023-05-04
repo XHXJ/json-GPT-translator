@@ -28,5 +28,10 @@ public class ChatGptTranslationController {
         chatGptTranslationService.start();
     }
 
+//    @GetMapping("/stop")
+//    @Operation(summary = "停止翻译")
+//    public void stop() {
+//        chatGptTranslationService.stop();
+//    }
 
 }
