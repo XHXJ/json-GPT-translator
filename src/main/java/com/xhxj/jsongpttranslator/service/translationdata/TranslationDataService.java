@@ -22,7 +22,7 @@ public interface TranslationDataService extends IService<TranslationData> {
      *
      * @return
      */
-    String exportJson();
+    String exportJson(Integer projects);
 
     /**
      * 读取csv文件

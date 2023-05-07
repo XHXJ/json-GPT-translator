@@ -60,6 +60,15 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     @Override
     public Integer readJsonFile(MultipartFile file) {
         try {
+            //新建项目
+            TranslateProjects translateProjects = new TranslateProjects()
+                    .setProjectName(file.getOriginalFilename());
+            translateProjectsService.save(translateProjects);
+            //新建文件
+            TranslateFile translateFile = new TranslateFile()
+                    .setProjectId(translateProjects.getProjectId())
+                    .setFileName(file.getOriginalFilename());
+            translateFileService.save(translateFile);
             //读取inputStream
             InputStream inputStream = file.getInputStream();
             //将inputStream转换为字符串
@@ -68,11 +77,10 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
             JSONObject json = JSONUtil.parseObj(jsonStr);
 
             List<TranslationData> list = json.keySet().stream()
-                    .map(o -> {
-                        TranslationData translationData = new TranslationData();
-                        translationData.setOriginalText(o);
-                        return translationData;
-                    })
+                    .map(o -> new TranslationData()
+                            .setFileId(translateFile.getFileId())
+                            .setProjectId(translateProjects.getProjectId())
+                            .setOriginalText(o))
                     .toList();
             return this.baseMapper.insertBatchSomeColumn(list);
         } catch (IOException e) {
@@ -86,8 +94,12 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
      * @return json字符串
      */
     @Override
-    public String exportJson() {
-        List<TranslationData> translationData = this.baseMapper.selectList(new LambdaQueryWrapper<TranslationData>().isNotNull(TranslationData::getTranslationText));
+    public String exportJson(Integer projects) {
+        //寻找项目下所有的翻译数据
+        List<TranslationData> translationData = this.baseMapper.selectList(new LambdaQueryWrapper<TranslationData>()
+                .eq(TranslationData::getProjectId, projects)
+                .isNotNull(TranslationData::getTranslationText)
+        );
         //将list转换为json
         JSONObject json = JSONUtil.createObj();
         translationData.forEach(o -> json.set(o.getOriginalText(), o.getTranslationText()));

@@ -87,10 +87,10 @@ public class TranslationDataController {
 
     @GetMapping("/export-json")
     @Operation(summary = "导出翻译后的json文件")
-    public void exportJson(HttpServletResponse response) {
+    public void exportJson(HttpServletResponse response, @Schema(name = "projects", description = "项目id", type = "integer") @RequestParam(value = "projects") Integer projects) {
         try {
             // 获取翻译后的 JSON 字符串
-            String translatedJson = translationDataService.exportJson();
+            String translatedJson = translationDataService.exportJson(projects);
 
             // 设置响应头以指示浏览器下载文件
             response.setContentType("application/octet-stream");
