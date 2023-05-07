@@ -203,14 +203,10 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                     //获取翻译数据
                     List<TranslationData> translationData = collect.get(o.getFileId());
 
-                    //创建csv文件
+                    // 创建csv文件
                     ByteArrayOutputStream csvByteArrayOutputStream = new ByteArrayOutputStream();
-                    try (CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(csvByteArrayOutputStream))) {
-//                        //写入标题行
-//                        String[] header = {"原始文本", "翻译文本", "机器翻译", "润色翻译", "最终翻译"};
-//                        csvWriter.writeNext(header);
-
-                        //写入数据行
+                    try (CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(csvByteArrayOutputStream), ',', CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, "\r\n")) {
+                        // 写入数据行
                         for (TranslationData data : translationData) {
                             String[] row = {data.getOriginalText(), data.getTranslationText()};
                             csvWriter.writeNext(row);
