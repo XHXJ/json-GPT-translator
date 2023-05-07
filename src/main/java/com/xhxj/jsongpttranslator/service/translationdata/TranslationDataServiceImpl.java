@@ -82,7 +82,8 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                             .setProjectId(translateProjects.getProjectId())
                             .setOriginalText(o))
                     .toList();
-            return this.baseMapper.insertBatchSomeColumn(list);
+            this.baseMapper.insertBatchSomeColumn(list);
+            return translateProjects.getProjectId();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -156,7 +157,7 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
             return -1;
         }
 
-        return null;
+        return translateProjects.getProjectId();
     }
 
     /**
