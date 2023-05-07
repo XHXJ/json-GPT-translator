@@ -1,8 +1,7 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
-import com.xhxj.jsongpttranslator.framework.async.ChatGptAsyncConfig;
+import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,15 +138,15 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                 totalTokens = chatGptTranslationAsyncService.calculateToken(list.subList(index, Math.min(index + batchSize, list.size())));
 
                 if (totalTokens < 1500 && index + batchSize < list.size()) {
-                    batchSize ++;
+                    batchSize +=2;
                 } else if (totalTokens > 1900) {
-                    batchSize --;
+                    batchSize -=2;
                 } else {
                     break; // 当 totalTokens 在 1500-2000 之间时，跳出循环
                 }
 
                 retryCount++; // 每次循环都增加重试计数器
-            } while (retryCount < 20); // 当重试次数达到20次时，跳出循环
+            } while (retryCount < 5); // 当重试次数达到5次时，跳出循环
 
             List<TranslationData> batch = list.subList(index, Math.min(index + batchSize, list.size()));
             resultList.add(batch);

@@ -1,10 +1,9 @@
 package com.xhxj.jsongpttranslator.controller.OpenaiProperties;
 
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.OpenaiPropertiesVO;
-import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties.OpenaiProperties;
-import com.xhxj.jsongpttranslator.service.OpenaiProperties.OpenaiPropertiesService;
+import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
+import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

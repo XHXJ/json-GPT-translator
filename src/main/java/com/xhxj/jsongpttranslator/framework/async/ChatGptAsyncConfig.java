@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -24,6 +25,8 @@ public class ChatGptAsyncConfig implements AsyncConfigurer {
         executor.setMaxPoolSize(60);
         executor.setQueueCapacity(1000);
         executor.setThreadNamePrefix("ChatGpt-");
+        // 设置拒绝策略为 CallerRunsPolicy
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
         executor.initialize();
         return executor;
     }

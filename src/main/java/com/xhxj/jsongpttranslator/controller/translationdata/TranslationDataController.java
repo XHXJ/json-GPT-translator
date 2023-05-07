@@ -2,7 +2,7 @@ package com.xhxj.jsongpttranslator.controller.translationdata;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataPageReqVO;
-import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
+import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +52,40 @@ public class TranslationDataController {
         return translationDataService.readJsonFile(file);
     }
 
-    @PostMapping("/export-json")
+    @PostMapping(path = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "上传翻译csv文件(压缩包)")
+    public Integer uploadCsvFile(
+            @RequestParam("file")
+            @Schema(description = "上传的文件", type = "string", format = "binary")
+            @RequestPart(value = "file") final MultipartFile file) {
+        return translationDataService.readCsvFile(file);
+    }
+
+    @GetMapping("/export-csv")
+    @Operation(summary = "导出翻译后的csv文件")
+    public void exportCsv(HttpServletResponse response, @Schema(name = "projects", description = "项目id", type = "integer") @RequestParam(value = "projects") Integer projects) {
+        try {
+            // 获取翻译后的字节数组
+            byte[] translatedCsv = translationDataService.exportCsv(projects);
+
+            // 设置响应头以指示浏览器下载文件
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; filename=translated_csv.zip");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setContentLength(translatedCsv.length);
+
+            // 将文件内容写入响应
+            response.getOutputStream().write(translatedCsv);
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
+        } catch (IOException e) {
+            // 处理异常，例如记录错误或返回错误响应
+            e.printStackTrace();
+        }
+    }
+
+
+    @GetMapping("/export-json")
     @Operation(summary = "导出翻译后的json文件")
     public void exportJson(HttpServletResponse response) {
         try {

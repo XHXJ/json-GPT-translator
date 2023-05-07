@@ -1,4 +1,4 @@
-package com.xhxj.jsongpttranslator.dal.dataobject.chatgpt;
+package com.xhxj.jsongpttranslator.dal.dataobject;
 
 import lombok.Data;
 

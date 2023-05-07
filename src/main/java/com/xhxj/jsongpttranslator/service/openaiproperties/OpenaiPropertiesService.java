@@ -1,7 +1,7 @@
-package com.xhxj.jsongpttranslator.service.OpenaiProperties;
+package com.xhxj.jsongpttranslator.service.openaiproperties;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties.OpenaiProperties;
+import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 
 /**
  * @author:zdthm2010@gmail.com

@@ -1,7 +1,6 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
-import com.unfbx.chatgpt.entity.chat.Message;
-import com.xhxj.jsongpttranslator.dal.dataobject.translationdata.TranslationData;
+import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 
 import java.util.List;
 import java.util.Objects;
