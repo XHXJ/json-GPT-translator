@@ -3,19 +3,27 @@ package com.xhxj.jsongpttranslator.service.translationdata;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.util.ListUtils;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataPageReqVO;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateFile;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateProjects;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.dal.hsqldb.TranslationDataMapper;
+import com.xhxj.jsongpttranslator.framework.easyexcel.TranslatorExcelDataListener;
 import com.xhxj.jsongpttranslator.service.translatefile.TranslateFileService;
 import com.xhxj.jsongpttranslator.service.translateprojects.TranslateProjectsService;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +116,7 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     }
 
     @Override
-    public Integer readCsvFile(MultipartFile zipFile) {
+    public Integer readExcelFile(MultipartFile zipFile) {
         // 获取zip文件中的csv文件
 
         //创建项目名称
@@ -121,19 +129,20 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
             ZipEntry zipEntry = zis.getNextEntry();
 
             while (zipEntry != null) {
-
-                String fileName = zipEntry.getName();
+                //获取文件名
+                String[] parts = zipEntry.getName().split("/");
+                String extractedFileName = parts[parts.length - 1];
                 //创建翻译文件数据
                 TranslateFile translateFile = new TranslateFile()
                         .setProjectId(translateProjects.getProjectId())
-                        .setFileName(fileName);
+                        .setFileName(extractedFileName);
                 //保存文件信息
                 translateFileService.save(translateFile);
 
 
-                if (fileName.toLowerCase().endsWith(".csv")) {
+                if (extractedFileName.toLowerCase().endsWith(".xlsx")) {
                     //保存翻译原文数据
-                    List<String> originalText = processCsvFile(zis);
+                    List<String> originalText = processExcelFile(zis);
                     if (originalText != null && originalText.size() != 0) {
                         List<TranslationData> translationDataList = new ArrayList<>();
                         //保存翻译原文数据
@@ -161,40 +170,34 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     }
 
     /**
-     * 处理csv文件
+     * 处理Excel文件
      *
      * @param zis
      * @return
      */
-    private List<String> processCsvFile(ZipInputStream zis) {
-        CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(zis, StandardCharsets.UTF_8)));
+    private List<String> processExcelFile(ZipInputStream zis) {
+        TranslatorExcelDataListener excelDataListener = new TranslatorExcelDataListener();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            // 读取 CSV 文件的标题行
-            String[] header = reader.readNext();
-
-            // 创建一个空的List，用于存储读取的数据
-            List<String> dataList = new ArrayList<>();
-
-            // 读取 CSV 文件中的每一行，将每行数据转换成一个Map，然后将Map添加到List中
-            String[] line;
-            while ((line = reader.readNext()) != null) {
-                Map<String, String> dataMap = new HashMap<>();
-                dataList.add(line[0]);
-            }
-            return dataList;
-        } catch (Exception e) {
-            e.printStackTrace();
+            IOUtils.copy(zis, outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return null;
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+        EasyExcel.read(inputStream, excelDataListener).sheet().doRead();
+        return excelDataListener.getDataList().stream()
+                .map(map -> map.get(0))
+                .collect(Collectors.toList());
     }
 
+
     /**
-     * 导出csv文件
+     * 导出Excel文件
      *
      * @return
      */
     @Override
-    public byte[] exportCsv(Integer projects) {
+    public byte[] exportExcel(Integer projects) {
         //获取项目下的所有文件
         List<TranslateFile> translateFiles = translateFileService.list(new LambdaQueryWrapper<TranslateFile>().eq(TranslateFile::getProjectId, projects));
         //获取文件列表下的所有翻译数据
@@ -215,19 +218,29 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
 
                     //获取翻译数据
                     List<TranslationData> translationData = collect.get(o.getFileId());
-
-                    // 创建csv文件
-                    ByteArrayOutputStream csvByteArrayOutputStream = new ByteArrayOutputStream();
-                    try (CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(csvByteArrayOutputStream), ',', CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, "\r\n")) {
-                        // 写入数据行
-                        for (TranslationData data : translationData) {
-                            String[] row = {data.getOriginalText(), data.getTranslationText()};
-                            csvWriter.writeNext(row);
-                        }
+                    //如果翻译数据为空，则跳过有些
+                    if (translationData == null) {
+                        return;
                     }
+                    //创建表头
+                    List<List<String>> head = ListUtils.newArrayList();
+                    List<String> head0 = ListUtils.newArrayList();
+                    head0.add("原文");
+                    List<String> head1 = ListUtils.newArrayList();
+                    head1.add("译文");
+                    head.add(head0);
+                    head.add(head1);
+                    //创建表格
+                    List<List<Object>> tableData = ListUtils.newArrayList();
+                    for (TranslationData translationDatum : translationData) {
+                        List<Object> data = ListUtils.newArrayList();
+                        data.add(translationDatum.getOriginalText());
+                        data.add(translationDatum.getTranslationText());
+                        tableData.add(data);
+                    }
+                    EasyExcel.write(zipOutputStream).autoCloseStream(false).head(head).sheet("sheet1").doWrite(tableData);
 
-                    //写入zip文件
-                    zipOutputStream.write(csvByteArrayOutputStream.toByteArray());
+
                     zipOutputStream.closeEntry();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -239,4 +252,6 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
 
         return byteArrayOutputStream.toByteArray();
     }
+
+
 }

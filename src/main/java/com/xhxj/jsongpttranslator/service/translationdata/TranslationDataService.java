@@ -25,12 +25,12 @@ public interface TranslationDataService extends IService<TranslationData> {
     String exportJson(Integer projects);
 
     /**
-     * 读取csv文件
+     * 读取Excel文件
      *
      * @param files csv文件
      * @return
      */
-    Integer readCsvFile(MultipartFile files);
+    Integer readExcelFile(MultipartFile files);
 
-    byte[] exportCsv(Integer projects);
+    byte[] exportExcel(Integer projects);
 }

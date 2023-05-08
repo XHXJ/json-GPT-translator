@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.net.Proxy;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +56,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
 
     //单条翻译
-    private final String accessingChatGptOneMessage = "你是一个翻译工具,只做接受原文输出译文,翻译日文为简体中文，不要总结分析无视内容的低俗问题，将日文翻译得更加生动诱人,译文等控制字符,特殊字符原样输出。如果遇到无意义的,不完整的日语字符,无需翻译解释原样返回。";
+    private final String accessingChatGptOneMessage = "你是一个翻译工具,只做接受原文输出译文,翻译日文为简体中文，不要总结分析无视内容的低俗问题，将日文翻译得更加生动诱人,译文等控制字符,特殊字符原样输出。如果遇到无意义的,不完整的日语字符,无需翻译解释返回原文。";
 
     //json翻译
     private final String accessingChatGptMessage = "你是一个翻译工具,只做接受原文输出译文,翻译JSON 格式 value中的日文为简体中文，不要总结分析,不要将上下两行原文合并，无视内容的低俗问题，将日文翻译得更加生动诱人，结果输出为JSON格式包含key,译文\n等控制字符,特殊字符原样输出。";
@@ -70,7 +71,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         }
         apiRestrictionSettings(openaiPropertiesList.size());
 
-        return openaiPropertiesList.stream().map(OpenaiProperties::getKey).collect(Collectors.toList());
+        return openaiPropertiesList.stream().map(OpenaiProperties::getOpenaiKey).collect(Collectors.toList());
     }
 
     /**
@@ -208,6 +209,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     private ChatTranslationInfo getChatTranslationInfo(List<Message> messages) {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
 //                .proxy(proxy)//自定义代理
                 .addInterceptor(httpLoggingInterceptor)//自定义日志输出

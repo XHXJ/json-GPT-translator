@@ -2,12 +2,12 @@ create table OPENAI_PROPERTIES
 (
     ID  BIGINT identity
         primary key,
-    KEY VARCHAR(64) not null
+    OPENAI_KEY VARCHAR(64) not null
 );
 
 comment on table OPENAI_PROPERTIES is 'openai配置类';
 
-comment on column OPENAI_PROPERTIES.KEY is 'openai的key';
+comment on column OPENAI_PROPERTIES.OPENAI_KEY is 'openai的key';
 
 create table TRANSLATE_FILES
 (

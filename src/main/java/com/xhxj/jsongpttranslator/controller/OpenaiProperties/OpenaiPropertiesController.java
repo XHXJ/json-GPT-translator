@@ -31,7 +31,7 @@ public class OpenaiPropertiesController {
     public String uploadKey(@RequestBody OpenaiPropertiesVO key) {
         for (String s : key.getKey()) {
             OpenaiProperties openaiProperties = new OpenaiProperties();
-            openaiProperties.setKey(s);
+            openaiProperties.setOpenaiKey(s);
             openaiPropertiesService.save(openaiProperties);
         }
         return "key设置成功: " + Arrays.toString(key.getKey());

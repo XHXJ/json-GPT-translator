@@ -26,5 +26,5 @@ public class OpenaiProperties {
 
 
     @Schema(description = "openai的api key")
-    private String key;
+    private String openaiKey;
 }

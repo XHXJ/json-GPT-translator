@@ -63,7 +63,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                     break;
                 }
                 runBatchTranslation(multipleSentences);
-            } while (true);
+            } while (startFlag.get());
 
 
             do {
@@ -84,7 +84,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                 } catch (Exception e) {
                     log.error("单条翻译出错 {}", e.getMessage());
                 }
-            } while (true);
+            } while (startFlag.get());
 
 
         } catch (Exception e) {
@@ -138,9 +138,9 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                 totalTokens = chatGptTranslationAsyncService.calculateToken(list.subList(index, Math.min(index + batchSize, list.size())));
 
                 if (totalTokens < 1500 && index + batchSize < list.size()) {
-                    batchSize +=2;
+                    batchSize += 2;
                 } else if (totalTokens > 1900) {
-                    batchSize -=2;
+                    batchSize -= 2;
                 } else {
                     break; // 当 totalTokens 在 1500-2000 之间时，跳出循环
                 }

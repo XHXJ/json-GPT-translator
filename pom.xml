@@ -54,6 +54,11 @@
             <version>5.7.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.3.1</version>
+        </dependency>
 
 
         <dependency>
@@ -73,12 +78,6 @@
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -93,6 +92,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -112,5 +121,20 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <!--不同环境激活不同的数据库依赖-->
+        <profile>
+            <id>local</id>
+            <dependencies>
+
+            </dependencies>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <dependencies>
+
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

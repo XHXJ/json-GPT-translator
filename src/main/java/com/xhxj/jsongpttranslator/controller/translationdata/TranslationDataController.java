@@ -52,21 +52,21 @@ public class TranslationDataController {
         return translationDataService.readJsonFile(file);
     }
 
-    @PostMapping(path = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "上传翻译csv文件(压缩包)")
-    public Integer uploadCsvFile(
+    @PostMapping(path = "/upload-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "上传翻译Excel文件(压缩包)")
+    public Integer uploadExcelFile(
             @RequestParam("file")
             @Schema(description = "上传的文件", type = "string", format = "binary")
             @RequestPart(value = "file") final MultipartFile file) {
-        return translationDataService.readCsvFile(file);
+        return translationDataService.readExcelFile(file);
     }
 
-    @GetMapping("/export-csv")
-    @Operation(summary = "导出翻译后的csv文件")
+    @GetMapping("/export-excel")
+    @Operation(summary = "导出翻译后的Excel文件")
     public void exportCsv(HttpServletResponse response, @Schema(name = "projects", description = "项目id", type = "integer") @RequestParam(value = "projects") Integer projects) {
         try {
             // 获取翻译后的字节数组
-            byte[] translatedCsv = translationDataService.exportCsv(projects);
+            byte[] translatedCsv = translationDataService.exportExcel(projects);
 
             // 设置响应头以指示浏览器下载文件
             response.setContentType("application/octet-stream");
