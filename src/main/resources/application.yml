@@ -1,10 +1,13 @@
 spring:
   profiles:
-    active: local
+    active: '@profiles.active@'
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
 
 springdoc:
