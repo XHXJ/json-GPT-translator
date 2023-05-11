@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../gpt-translator-web.iml" filepath="$PROJECT_DIR$/../gpt-translator-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gpt-translator-web/gpt-translator-web.iml" filepath="$PROJECT_DIR$/gpt-translator-web/gpt-translator-web.iml" />
     </modules>
   </component>
 </project>
