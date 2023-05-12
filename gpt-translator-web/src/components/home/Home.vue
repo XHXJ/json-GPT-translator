@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <h1>这是一个居于chatgpt的翻译软件如果你想开始使用请点击按钮</h1>
+    <h1>这是chatgpt的翻译软件如果你想开始使用请点击按钮</h1>
     <router-link to="/upload-file-start">
         <el-button type="primary">
             开始使用

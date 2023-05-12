@@ -5,31 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ab9fc14-0b2d-4952-b61e-2e8528bb34b2" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/gpt-translator-web.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/configure/Prompt/ConfigurePrompt.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/configure/key/Configurekey.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/export/Export.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/home/Home.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/navigationbar/NavigationBar.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/query/Query.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/uploadfile/UploadFile.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/uploadfile/UploadFileStart.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gpt-translator-web/yarn.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/HelloWorld.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/TheWelcome.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/WelcomeItem.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/icons/IconCommunity.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/icons/IconDocumentation.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/icons/IconEcosystem.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/icons/IconSupport.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/icons/IconTooling.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/home/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/home/Home.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +146,7 @@
       <updated>1683707943821</updated>
       <workItem from="1683707944940" duration="22185000" />
       <workItem from="1683789181516" duration="563000" />
-      <workItem from="1683789773194" duration="7474000" />
+      <workItem from="1683789773194" duration="9931000" />
     </task>
     <servers />
   </component>
