@@ -5,8 +5,191 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ab9fc14-0b2d-4952-b61e-2e8528bb34b2" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.env.development" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.env.production" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.env.staging" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.eslintignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.eslintrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.markdownlint.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.npmrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.prettierrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.stylelintignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/README.en-US.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/build/cdn.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/build/compress.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/build/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/build/info.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/build/optimize.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/build/plugins.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/commitlint.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/mock/asyncRoutes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/mock/login.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/mock/refreshToken.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/pnpm-lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/postcss.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/public/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/public/serverConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/routes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/user.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/iconfont/iconfont.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/iconfont/iconfont.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/iconfont/iconfont.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/iconfont/iconfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/iconfont/iconfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/iconfont/iconfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/login/avatar.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/login/bg.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/login/illustration.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/status/403.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/status/404.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/status/500.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/back_top.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/dark.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/day.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/enter_outlined.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/exit_screen.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/full_screen.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/assets/svg/keyboard_esc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReAuth/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReAuth/src/auth.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReCol/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/type.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/src/hooks.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/src/iconfont.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/src/iconifyIconOffline.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/src/iconifyIconOnline.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/src/offlineIcon.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReIcon/src/types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/src/bar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/src/svg/collapse.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/src/svg/drag.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/src/svg/expand.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/src/svg/refresh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/RePureTableBar/src/svg/settings.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/config/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/directives/auth/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/directives/elResizeDetector/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/directives/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/appMain.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/navbar.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/notice/data.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/notice/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/notice/noticeItem.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/notice/noticeList.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/panel/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/search/components/SearchFooter.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/search/components/SearchModal.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/search/components/SearchResult.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/search/components/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/search/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/setting/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/breadCrumb.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/extraIcon.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/horizontal.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/leftCollapse.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/logo.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/mixNav.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/sidebarItem.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/topCollapse.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/sidebar/vertical.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/tag/index.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/components/tag/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/frameView.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/hooks/useBoolean.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/hooks/useDataThemeChange.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/hooks/useLayout.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/hooks/useNav.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/hooks/useTag.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/redirect.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/theme/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/layout/types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/mockProdServer.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/plugins/echarts/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/plugins/element-plus/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/error.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/home.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/remaining.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/app.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/epTheme.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/multiTags.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/permission.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/settings.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/store/modules/user.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/dark.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/element-plus.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/index.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/login.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/reset.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/sidebar.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/tailwind.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/style/transition.scss" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/auth.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/globalPolyfills.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/http/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/http/types.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/message.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/mitt.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/print.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/progress/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/propTypes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/responsive.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/sso.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/utils/tree.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/error/403.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/error/404.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/error/500.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/login/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/login/utils/motion.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/login/utils/rule.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/login/utils/static.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/permission/button/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/permission/page/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/welcome/index.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/stylelint.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/tailwind.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/types/global-components.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/types/global.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/types/index.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/types/shims-tsx.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/types/shims-vue.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/vite.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/home/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/home/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/.vscode/extensions.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/public/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/assets/base.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/assets/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/assets/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/configure/Prompt/ConfigurePrompt.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/configure/key/Configurekey.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/export/Export.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/home/Home.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/navigationbar/NavigationBar.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/query/Query.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/uploadfile/UploadFile.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/uploadfile/UploadFileStart.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/main.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/router.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/vite.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/yarn.lock" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,39 +230,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/MyPrograms/javaProject/json-GPT-translator/gpt-translator-web/src/components/configure&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.5634296&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.nodejs&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;5c07c14dae92ee7569743a10920b6afa&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/MyPrograms/javaProject/json-GPT-translator/gpt-translator-web",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "pnpm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.5634296",
+    "settings.editor.selected.configurable": "settings.nodejs",
+    "spring.configuration.checksum": "5c07c14dae92ee7569743a10920b6afa",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;vue.recent.templates&quot;: [
-      &quot;Vue Composition API Component&quot;
+  "keyToStringList": {
+    "vue.recent.templates": [
+      "Vue Composition API Component"
     ]
   }
-}</component>
+}]]></component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -147,6 +330,8 @@
       <workItem from="1683707944940" duration="22185000" />
       <workItem from="1683789181516" duration="563000" />
       <workItem from="1683789773194" duration="9931000" />
+      <workItem from="1684113221013" duration="2019000" />
+      <workItem from="1684199646453" duration="2001000" />
     </task>
     <servers />
   </component>

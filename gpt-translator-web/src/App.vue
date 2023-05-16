@@ -1,27 +1,25 @@
-<script setup>
-import NavigationBar from "./components/navigationbar/NavigationBar.vue";
-</script>
-
 <template>
-    <div class="common-layout">
-        <el-container>
-            <el-header>
-                <NavigationBar></NavigationBar>
-            </el-header>
-            <el-main>
-                <el-card class="card">
-                    <router-view></router-view>
-                </el-card>
-            </el-main>
-        </el-container>
-    </div>
+  <el-config-provider :locale="currentLocale">
+    <router-view />
+    <ReDialog />
+  </el-config-provider>
 </template>
 
-<style scoped lang="scss">
-.card{
-    margin: 10px 4rem;
-}
-.breadcrumb{
-    margin-bottom: 35px;
-}
-</style>
+<script lang="ts">
+import { defineComponent } from "vue";
+import { ElConfigProvider } from "element-plus";
+import zhCn from "element-plus/lib/locale/lang/zh-cn";
+import { ReDialog } from "@/components/ReDialog";
+export default defineComponent({
+  name: "app",
+  components: {
+    [ElConfigProvider.name]: ElConfigProvider,
+    ReDialog
+  },
+  computed: {
+    currentLocale() {
+      return zhCn;
+    }
+  }
+});
+</script>
