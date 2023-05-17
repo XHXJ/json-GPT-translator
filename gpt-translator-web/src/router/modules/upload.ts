@@ -2,7 +2,8 @@
 export default {
   path: "/upload",
   meta: {
-    title: "上传文件"
+    title: "上传文件",
+    rank: 2
   },
   children: [
     {

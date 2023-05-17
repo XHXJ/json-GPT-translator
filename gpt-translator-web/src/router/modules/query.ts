@@ -2,7 +2,8 @@
 export default {
   path: "/query",
   meta: {
-    title: "数据管理"
+    title: "数据管理",
+    rank: 4
   },
   children: [
     {

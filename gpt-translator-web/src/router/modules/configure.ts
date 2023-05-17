@@ -2,7 +2,8 @@
 export default {
   path: "/configure",
   meta: {
-    title: "配置管理"
+    title: "配置管理",
+    rank: 3
   },
   children: [
     {

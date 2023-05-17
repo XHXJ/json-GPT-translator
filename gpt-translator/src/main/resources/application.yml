@@ -2,12 +2,10 @@ spring:
   profiles:
     active: '@profiles.active@'
   servlet:
+    context-path: /api
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
 
 
 springdoc:
@@ -26,5 +24,5 @@ knife4j:
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

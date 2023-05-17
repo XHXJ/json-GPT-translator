@@ -3,6 +3,7 @@ package com.xhxj.jsongpttranslator.controller.translationdata;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataPageReqVO;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.framework.web.pojo.CommonResult;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,9 +39,9 @@ public class TranslationDataController {
      */
     @GetMapping("/page")
     @Operation(summary = "分页查询翻译列表")
-    public IPage<TranslationData> page(
+    public CommonResult<IPage<TranslationData>> page(
             @ParameterObject @Valid TranslationDataPageReqVO translationDataPageReqVO) {
-        return translationDataService.page(translationDataPageReqVO);
+        return CommonResult.success(translationDataService.page(translationDataPageReqVO));
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

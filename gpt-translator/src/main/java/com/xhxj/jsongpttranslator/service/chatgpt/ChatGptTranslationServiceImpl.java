@@ -39,7 +39,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     public void stop() {
         startFlag.set(false);
         //重启线程池
-        log.info("程序已经停止");
+        log.info("程序已经设置停止");
     }
 
     @Override
