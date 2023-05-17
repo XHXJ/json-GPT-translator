@@ -1,14 +1,16 @@
 <template>
-  <el-card>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="JSON文件上传" name="0">
-        <UploadFile :title="jsonTitle"/>
-      </el-tab-pane>
-      <el-tab-pane label="Excel文件上传" name="1">
-        <UploadFile :title="excelTitle"/>
-      </el-tab-pane>
-    </el-tabs>
-  </el-card>
+  <div>
+    <el-card>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="JSON文件上传" name="0">
+          <UploadFile :title="jsonTitle"/>
+        </el-tab-pane>
+        <el-tab-pane label="Excel文件上传" name="1">
+          <UploadFile :title="excelTitle"/>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
+  </div>
 </template>
 
 <script lang="ts" setup>

@@ -5,21 +5,62 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ab9fc14-0b2d-4952-b61e-2e8528bb34b2" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.husky/commit-msg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.husky/common.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.husky/lintstagedrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/.husky/pre-commit" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/query.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/error.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/error/403.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/error/404.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/error/500.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/framework/web/GlobalControllerPathPrefixConfiguration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-auroraGreen.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-default.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-dusk.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-light.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-mingQing.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-pink.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-saucePurple.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-volcano.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/assets/layout-theme-yellow.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/serverConfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/css/index-0efe821a.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/css/index-1d06aa9b.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/css/index-4c6f1b9f.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/css/index-da21be6c.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/dark-1a0ff7a2.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-16fea94f.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-1d575312.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-374fdd04.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-6eb57eeb.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-6ec8e732.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-820d8583.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-845b918d.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-94d6eb17.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-a57f830f.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/index-e1633215.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/js/redirect-8a9c7871.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/static/static/png/bg-7b14eacd.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator-web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/configure.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/configure.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/api/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/components/ReDialog/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/query.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/query.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/upload.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/router/modules/upload.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/key/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/key/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/prompt/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/prompt/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/export/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/export/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/query/project/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/query/project/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/query/translate/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/query/translate/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/chatgpt/ChatGptTranslationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/chatgpt/ChatGptTranslationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/translationdata/TranslationDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/translationdata/TranslationDataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/upload/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/upload/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/vite.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/resources/db/Mariadb.sql" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/db/Mariadb.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,8 +71,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="Class" />
         <option value="Vue Composition API Component" />
+        <option value="HTML File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -53,6 +95,9 @@
       </list>
     </option>
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2PavKbwzRZsZajZ8ZxjBH6b8T4O" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -64,6 +109,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -73,25 +119,22 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/MyPrograms/javaProject/json-GPT-translator/gpt-translator-web",
+    "last_opened_file_path": "D:/MyProgramFiles/javaProject/json-GPT-translator/gpt-translator-web/src/views/query",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "pnpm",
-    "project.structure.last.edited": "SDK",
+    "project.structure.last.edited": "模块",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.5634296",
     "settings.editor.selected.configurable": "settings.nodejs",
     "spring.configuration.checksum": "5c07c14dae92ee7569743a10920b6afa",
-    "ts.external.directory.path": "C:\\MyPrograms\\javaProject\\json-GPT-translator\\gpt-translator-web\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\MyProgramFiles\\javaProject\\json-GPT-translator\\gpt-translator-web\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "hsqldb"
-    ],
     "vue.recent.templates": [
       "Vue Composition API Component"
     ]
@@ -102,6 +145,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\MyProgramFiles\javaProject\json-GPT-translator\gpt-translator-web\src\views\query" />
+      <recent name="D:\MyProgramFiles\javaProject\json-GPT-translator\gpt-translator-web\src\views" />
+      <recent name="D:\MyProgramFiles\javaProject\json-GPT-translator\gpt-translator-web" />
       <recent name="C:\MyPrograms\javaProject\json-GPT-translator\gpt-translator-web\src\components\configure" />
       <recent name="C:\MyPrograms\javaProject\json-GPT-translator\src\main\java\com\xhxj\jsongpttranslator\framework\web" />
     </key>
@@ -137,6 +183,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/gpt-translator-web/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/gpt-translator-web/package.json" />
       <command value="run" />
@@ -161,6 +217,7 @@
       <list>
         <item itemvalue="npm.serve" />
         <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build" />
       </list>
     </recent_temporary>
   </component>
@@ -177,7 +234,6 @@
       <workItem from="1683789773194" duration="9931000" />
       <workItem from="1684113221013" duration="2019000" />
       <workItem from="1684199646453" duration="2001000" />
-      <workItem from="1684285414068" duration="18680000" />
     </task>
     <servers />
   </component>

@@ -1,8 +1,10 @@
 
 <template>
-  <el-card>
-    <h1>配置prompt</h1>
-  </el-card>
+  <div>
+    <el-card>
+      <h1>配置prompt</h1>
+    </el-card>
+  </div>
 </template>
 
 <script setup>

@@ -6,9 +6,11 @@ defineOptions({
 </script>
 
 <template>
-  <el-card>
-    <h1>导出</h1>
-  </el-card>
+  <div>
+    <el-card>
+      <h1>导出</h1>
+    </el-card>
+  </div>
 </template>
 
 <style scoped lang="scss">

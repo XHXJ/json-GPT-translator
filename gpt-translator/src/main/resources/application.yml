@@ -2,12 +2,10 @@ spring:
   profiles:
     active: '@profiles.active@'
   servlet:
-    context-path: /api
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
-
+# springdoc-openapi项目配置
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -15,7 +13,10 @@ springdoc:
     operations-sorter: alpha
   api-docs:
     path: /v3/api-docs
-    packages-to-scan: com.xhxj.jsongpttranslator.controller
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.xhxj.jsongpttranslator.controller
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true

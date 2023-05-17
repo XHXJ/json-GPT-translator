@@ -1,0 +1,1 @@
+import{d as o,b as t,e as a,w as n,o as s,a as c}from"./index-845b918d.js";const r=c("h1",null,"导出",-1),m=o({name:"export",__name:"index",setup(_){return(l,p)=>{const e=t("el-card");return s(),a(e,null,{default:n(()=>[r]),_:1})}}});export{m as default};
