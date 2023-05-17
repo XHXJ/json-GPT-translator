@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:hsqldb:mem:translate
     driver-class-name: org.hsqldb.jdbc.JDBCDriver
-    sql:
-      init:
-        schema-locations: classpath:db/script.sql
-        mode: always
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/script.sql
