@@ -3,9 +3,9 @@
 <mapper namespace="com.xhxj.jsongpttranslator.dal.hsqldb.TranslateProjectsMapper">
     <select id="queryByProjectIdWhetherToTranslate" resultType="java.util.Map">
         SELECT
-        PROJECT_ID AS projectId,
-        COUNT(CASE WHEN TRANSLATION_TEXT IS NULL THEN 1 END) AS notCompleted,
-        COUNT(CASE WHEN TRANSLATION_TEXT IS NOT NULL THEN 1 END) AS completed
+        PROJECT_ID AS PROJECTID,
+        COUNT(CASE WHEN TRANSLATION_TEXT IS NULL THEN 1 END) AS NOTCOMPLETED,
+        COUNT(CASE WHEN TRANSLATION_TEXT IS NOT NULL THEN 1 END) AS COMPLETED
         FROM
         TRANSLATIONS
         WHERE

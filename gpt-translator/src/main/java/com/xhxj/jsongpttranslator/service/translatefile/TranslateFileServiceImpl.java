@@ -44,8 +44,8 @@ public class TranslateFileServiceImpl extends ServiceImpl<TranslateFileMapper, T
                 v.setCompleted(0L);
                 v.setNotCompleted(0L);
             }else {
-                v.setCompleted((Long) data.get("completed"));
-                v.setNotCompleted((Long) data.get("notCompleted"));
+                v.setCompleted((Long) data.get("COMPLETED"));
+                v.setNotCompleted((Long) data.get("NOTCOMPLETED"));
             }
 
         });

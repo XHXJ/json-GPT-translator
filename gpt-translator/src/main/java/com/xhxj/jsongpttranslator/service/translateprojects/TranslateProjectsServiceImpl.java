@@ -45,8 +45,8 @@ public class TranslateProjectsServiceImpl extends ServiceImpl<TranslateProjectsM
                 v.setCompleted(0L);
                 v.setNotCompleted(0L);
             } else {
-                v.setCompleted((Long) data.get("completed"));
-                v.setNotCompleted((Long) data.get("notCompleted"));
+                v.setCompleted((Long) data.get("COMPLETED"));
+                v.setNotCompleted((Long) data.get("NOTCOMPLETED"));
             }
         });
 

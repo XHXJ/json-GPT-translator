@@ -16,6 +16,6 @@ public interface TranslateProjectsMapper extends BaseMapper<TranslateProjects> {
      * @param list
      * @return
      */
-    @MapKey("projectId")
+    @MapKey("PROJECTID")
     Map<Integer, Object> queryByProjectIdWhetherToTranslate(@Param("list") List<Integer> list);
 }

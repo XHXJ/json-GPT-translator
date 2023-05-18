@@ -3,9 +3,9 @@
 <mapper namespace="com.xhxj.jsongpttranslator.dal.hsqldb.TranslateFileMapper">
     <select id="queryByFileIdWhetherToTranslate" resultType="java.util.Map">
         SELECT
-        FILE_ID AS fileId,
-        COUNT(CASE WHEN TRANSLATION_TEXT IS NULL THEN 1 END) AS notCompleted,
-        COUNT(CASE WHEN TRANSLATION_TEXT IS NOT NULL THEN 1 END) AS completed
+        FILE_ID AS FILEID,
+        COUNT(CASE WHEN TRANSLATION_TEXT IS NULL THEN 1 END) AS NOTCOMPLETED,
+        COUNT(CASE WHEN TRANSLATION_TEXT IS NOT NULL THEN 1 END) AS COMPLETED
         FROM
         TRANSLATIONS
         WHERE

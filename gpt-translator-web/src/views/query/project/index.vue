@@ -154,7 +154,7 @@ const queryFile = (projectId: number, fileId: number) => {
 const calcPercentage = (notCompleted: number, completed: number) => {
   const total = notCompleted + completed;
   if (total === 0) return 0;
-  return (completed / total) * 100;
+  return (completed / total * 100).toFixed(2);
 };
 
 onMounted(() => {

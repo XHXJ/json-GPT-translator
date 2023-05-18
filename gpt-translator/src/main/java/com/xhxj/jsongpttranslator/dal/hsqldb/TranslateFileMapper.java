@@ -16,6 +16,6 @@ public interface TranslateFileMapper extends BaseMapper<TranslateFile> {
      * @param list
      * @return
      */
-    @MapKey("fileId")
+    @MapKey("FILEID")
     Map<Integer, Object> queryByFileIdWhetherToTranslate(@Param("list") List<Integer> list);
 }
