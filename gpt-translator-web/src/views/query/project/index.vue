@@ -1,83 +1,3 @@
-<script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
-import {fileDataList, projectsDataPage} from "@/api/query";
-import {useRouter} from "vue-router";
-
-defineOptions({
-  // name 作为一种规范最好必须写上并且和路由的name保持一致
-  name: "project"
-});
-
-const currentPage = ref(1)
-const pageSize = ref(10)
-const small = ref(false)
-const background = ref(false)
-const disabled = ref(false)
-
-const router = useRouter()
-
-const table = reactive({
-  data: [],
-  total: 0
-})
-
-const form = reactive({
-  projectName: ''
-})
-const getData = (pageNum, pageSize, form) =>
-  projectsDataPage({pageNum, pageSize, ...form}).then(res => {
-    table.data = res.data.records
-    table.total = res.data.total
-  })
-
-const childrenTable = ref(new Map())
-
-
-const expandChange = async (row, expandedRows) => {
-  if (expandedRows.length > 0) {
-    await fileDataList({projectId: row.projectId}).then(res => {
-      if (res.code === 0) {
-        childrenTable.value.set(row.projectId, res.data)
-      }
-    })
-  }
-}
-const onSearch = () => {
-  getData(currentPage.value, pageSize.value, form)
-}
-
-const handleSizeChange = (val: number) => {
-  getData(currentPage.value, val, form)
-
-}
-const handleCurrentChange = (val: number) => {
-  getData(val, pageSize.value, form)
-}
-//查看翻译跳转查询翻译页面
-const queryFile = (projectId: number, fileId: number) => {
-  // 获取路由器实例
-  router.push({
-    name: "translate",
-    query: {
-      projectId: projectId,
-      fileId: fileId
-    }
-  });
-
-}
-//计算百分比
-const calcPercentage = (notCompleted: number, completed: number) => {
-  const total = notCompleted + completed;
-  if (total === 0) return 0;
-  return (completed / total) * 100;
-};
-
-onMounted(() => {
-//初始化
-  getData(currentPage.value, pageSize.value, form)
-})
-
-</script>
 
 <template>
   <div>
@@ -163,6 +83,86 @@ onMounted(() => {
   </div>
 
 </template>
+<script setup lang="ts">
+import {onMounted, reactive, ref} from "vue";
+import {fileDataList, projectsDataPage} from "@/api/query";
+import {useRouter} from "vue-router";
+
+defineOptions({
+  // name 作为一种规范最好必须写上并且和路由的name保持一致
+  name: "project"
+});
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+const small = ref(false)
+const background = ref(false)
+const disabled = ref(false)
+
+const router = useRouter()
+
+const table = reactive({
+  data: [],
+  total: 0
+})
+
+const form = reactive({
+  projectName: ''
+})
+const getData = (pageNum, pageSize, form) =>
+  projectsDataPage({pageNum, pageSize, ...form}).then(res => {
+    table.data = res.data.records
+    table.total = res.data.total
+  })
+
+const childrenTable = ref(new Map())
+
+
+const expandChange = async (row, expandedRows) => {
+  if (expandedRows.length > 0) {
+    await fileDataList({projectId: row.projectId}).then(res => {
+      if (res.code === 0) {
+        childrenTable.value.set(row.projectId, res.data)
+      }
+    })
+  }
+}
+const onSearch = () => {
+  getData(currentPage.value, pageSize.value, form)
+}
+
+const handleSizeChange = (val: number) => {
+  getData(currentPage.value, val, form)
+
+}
+const handleCurrentChange = (val: number) => {
+  getData(val, pageSize.value, form)
+}
+//查看翻译跳转查询翻译页面
+const queryFile = (projectId: number, fileId: number) => {
+  // 获取路由器实例
+  router.push({
+    name: "translate",
+    query: {
+      projectId: projectId,
+      fileId: fileId
+    }
+  });
+
+}
+//计算百分比
+const calcPercentage = (notCompleted: number, completed: number) => {
+  const total = notCompleted + completed;
+  if (total === 0) return 0;
+  return (completed / total) * 100;
+};
+
+onMounted(() => {
+//初始化
+  getData(currentPage.value, pageSize.value, form)
+})
+
+</script>
 
 <style scoped lang="scss">
 .pagination {

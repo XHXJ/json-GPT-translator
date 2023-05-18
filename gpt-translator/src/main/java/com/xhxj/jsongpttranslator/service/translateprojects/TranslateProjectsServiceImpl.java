@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -34,10 +35,19 @@ public class TranslateProjectsServiceImpl extends ServiceImpl<TranslateProjectsM
         wrapper.like(StringUtils.isNotBlank(projectsPageReqVO.getProjectName()), TranslateProjects::getProjectName, projectsPageReqVO.getProjectName());
         wrapper.orderByDesc(TranslateProjects::getProjectId);
         Page<TranslateProjects> page = page(new Page<>(projectsPageReqVO.getPageNum(), projectsPageReqVO.getPageSize()), wrapper);
+
         //获取翻译进度
+        Map<Integer, Object> whetherToTranslate = this.baseMapper.queryByProjectIdWhetherToTranslate(page.getRecords().stream().map(TranslateProjects::getProjectId).toList());
         page.getRecords().forEach(v -> {
-            v.setCompleted(translationDataService.count(new LambdaQueryWrapper<TranslationData>().eq(TranslationData::getProjectId, v.getProjectId()).isNotNull(TranslationData::getTranslationText)));
-            v.setNotCompleted(translationDataService.count(new LambdaQueryWrapper<TranslationData>().eq(TranslationData::getProjectId, v.getProjectId()).isNull(TranslationData::getTranslationText)));
+            Map<String, Object> data = (Map<String, Object>) whetherToTranslate.get(v.getProjectId());
+            if (data == null) {
+                //可能有些文件没有翻译数据
+                v.setCompleted(0L);
+                v.setNotCompleted(0L);
+            } else {
+                v.setCompleted((Long) data.get("completed"));
+                v.setNotCompleted((Long) data.get("notCompleted"));
+            }
         });
 
         return page;

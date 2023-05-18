@@ -11,6 +11,10 @@ import lombok.Data;
 @Data
 @Schema(name = "OpenaiPropertiesVO", description = "OpenaiPropertiesVO实体类对象")
 public class OpenaiPropertiesVO {
+    @Schema(description = "页码", example = "1", type = "integer")
+    private Integer pageNum = 1;
+    @Schema(description = "每页条数", example = "10", type = "integer")
+    private Integer pageSize = 10;
     @Schema(description = "openai的key")
-    private String[] key;
+    private String key;
 }

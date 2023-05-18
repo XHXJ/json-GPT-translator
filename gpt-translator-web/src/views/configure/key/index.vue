@@ -1,112 +1,138 @@
 <template>
   <div>
+    <div class="form">
+      <el-form
+        ref="formRef"
+        :inline="true"
+        :model="addform"
+        class="bg-bg_color w-[99/100] pl-8 pt-4"
+      >
+        <el-form-item label="新增key：" prop="projectName">
+          <el-input
+            v-model="addform.key"
+            placeholder="输入新增的key"
+            clearable
+            class="!w-[200px]"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="success"
+            @click="onAddKey"
+          >
+            新增
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <el-card>
-      <el-row class="title" justify="space-between">
-        <el-col :span="4" class="text">
-          <el-text size="large">openai key 管理 :</el-text>
-        </el-col>
-        <el-col :span="2">
-          <el-button class="operation_button" @click="visible = true">新增</el-button>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="key" label="key"/>
-          <el-table-column fixed="right" width="120">
-            <template #default="scope">
-              <el-button link type="primary" size="small" @click="deletes(scope.row.key)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
-
-      <el-dialog v-model="visible" :show-close="false">
-        <template #header="{ close, titleId, titleClass }">
-          <h2 class="pop_notification" :id="titleId" :class="titleClass">新增key :</h2>
-          <el-input v-model="input" placeholder="输入您的 openai key"/>
-        </template>
-        <el-row justify="end">
-          <el-col :span="5">
-            <el-button class="operation_button" type="success" @click="add">
-              <el-icon class="el-icon--left">
-                <CircleCloseFilled/>
-              </el-icon>
-              新增
-            </el-button>
-          </el-col>
-          <el-col :span="5">
-            <el-button class="operation_button" type="danger" @click="visible = false">
-              <el-icon class="el-icon--left">
-                <CircleCloseFilled/>
-              </el-icon>
-              关闭
-            </el-button>
-          </el-col>
-        </el-row>
-
-      </el-dialog>
+      <h4 class="table-name">key 管理:</h4>
+      <el-table :data="table.data" style="width: 100%"
+      >
+        <el-table-column prop="id" label="id" width="50"/>
+        <el-table-column prop="openaiKey" label="key"/>
+        <el-table-column label="操作" width="100">
+          <template #default="scope">
+            <el-button type="danger" size="small" @click="onDelete(scope.row.id) "
+            >删除
+            </el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[5, 10, 20, 50]"
+          :small="small"
+          :disabled="disabled"
+          :background="background"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="table.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {CircleCloseFilled} from '@element-plus/icons-vue'
+import {onMounted, reactive, ref} from "vue";
+import {openaiPropertiesCreateKey, openaiPropertiesDelete, openaiPropertiesPage} from "@/api/configure";
+import {message} from "@/utils/message";
 
-import {ref} from "vue";
+const table = reactive({
+  data: [],
+  total: 0
+})
 
-const input = ref('')
-const visible = ref(false)
-const handleClick = () => {
-  console.log('click')
+const form = reactive({})
+const addform = reactive({
+  key: ''
+})
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+const small = ref(false)
+const background = ref(false)
+const disabled = ref(false)
+
+const onDelete = (id) => {
+  openaiPropertiesDelete({ids: id}).then(res => {
+    if (res.code === 0) {
+      message('删除key成功', {type: 'success'})
+    }
+    getData(currentPage.value, pageSize.value, form)
+  })
 }
 
-const tableData = [
-  {
-    id: 1,
-    key: 'CA 90036',
-  },
-  {
-    id: 2,
-    key: 'Office',
-  },
-  {
-    id: 3,
-    key: 'Office',
-  },
-  {
-    id: 4,
-    key: 'Office',
-  },
-]
+const onAddKey = () => {
+  openaiPropertiesCreateKey({key: addform.key}).then(res => {
+    if (res.code === 0) {
+      message('新增key成功', {type: 'success'})
+    }
+    getData(currentPage.value, pageSize.value, form)
+  })
+}
 
-const add = () => {
-  visible.value = false
-  console.log(input.value)
-  input.value = ''
+const getData = (pageNum, pageSize, form) =>
+  openaiPropertiesPage({pageNum, pageSize, ...form}).then(res => {
+    table.data = res.data.records
+    table.total = res.data.total
+  })
+
+const onSearch = () => {
+  getData(currentPage.value, pageSize.value, form)
 }
-const deletes = (row) => {
-  console.log('key:', row)
+
+const handleSizeChange = (val: number) => {
+  getData(currentPage.value, val, form)
+
 }
+const handleCurrentChange = (val: number) => {
+  getData(val, pageSize.value, form)
+}
+onMounted(() => {
+  getData(currentPage.value, pageSize.value, form)
+})
 </script>
 
 
 <style scoped lang="scss">
-.title {
-  .text {
-    padding-top: 13px;
-  }
-
-  margin-bottom: 10px;
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 
-.pop_notification {
-  margin-bottom: 30px;
+.form {
+  margin-bottom: 20px;
 }
 
-.operation_button {
-  margin-top: 10px;
-  margin-bottom: 10px;
+.table-name {
+  margin-bottom: 20px;
 }
 
 </style>

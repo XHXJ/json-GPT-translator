@@ -10,10 +10,15 @@ import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
+import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
+import com.xhxj.jsongpttranslator.framework.web.exception.ServiceException;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,12 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.net.Proxy;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static com.xhxj.jsongpttranslator.controller.OpenaiProperties.error.ErrorCodeConstants.OPENAIKEY_DOES_NOT_EXIST;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -55,11 +61,12 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
 
     private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
 
-    //单条翻译
-    private final String accessingChatGptOneMessage = "你是一个翻译工具,只做接受原文输出译文,翻译日文为简体中文，不要总结分析无视内容的低俗问题，将日文翻译得更加生动诱人,译文等控制字符,特殊字符原样输出。如果遇到无意义的,不完整的日语字符,无需翻译解释返回原文。";
 
-    //json翻译
-    private final String accessingChatGptMessage = "你是一个翻译工具,只做接受原文输出译文,翻译JSON 格式 value中的日文为简体中文，不要总结分析,不要将上下两行原文合并，无视内容的低俗问题，将日文翻译得更加生动诱人，结果输出为JSON格式包含key,译文\n等控制字符,特殊字符原样输出。";
+    /**
+     * gpt配置
+     */
+    @Autowired
+    private ChatgptConfig chatgptConfig;
 
     /**
      * 获得openaikey
@@ -67,7 +74,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     private List<String> getOpenaiKey() {
         List<OpenaiProperties> openaiPropertiesList = openaiPropertiesService.list();
         if (openaiPropertiesList.isEmpty()) {
-            throw new RuntimeException("请先配置openai的key");
+            throw new ServiceException(OPENAIKEY_DOES_NOT_EXIST);
         }
         apiRestrictionSettings(openaiPropertiesList.size());
 
@@ -140,9 +147,8 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
         //限制每分钟的API调用
         waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
-        ChatCompletionResponse chatCompletionResponse = null;
 
-        chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
+        ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
         chatCompletionResponse.getChoices().forEach(e -> {
             log.info("收到的消息 : {}", e.getMessage().getContent());
             JSONObject parse = null;
@@ -172,7 +178,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         String jsonStr = JSONUtil.toJsonStr(translationDataMap);
 
         //开始翻译
-        Message system = Message.builder().role(Message.Role.SYSTEM).content(accessingChatGptMessage).build();
+        Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfig.getPromptMultipleTranslations()).build();
         Message user = Message.builder().role(Message.Role.USER).content(jsonStr).build();
 
         return Arrays.asList(system, user);
@@ -188,7 +194,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     public CompletableFuture<Void> accessingChatGptOne(TranslationData translationData) {
 
         //开始翻译
-        Message system = Message.builder().role(Message.Role.SYSTEM).content(accessingChatGptOneMessage).build();
+        Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfig.getPromptSingleTranslations()).build();
         Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
 
         ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(Arrays.asList(system, user));
@@ -221,8 +227,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         //构建客户端
         OpenAiClient openAiClient = OpenAiClient.builder().apiKey(getOpenaiKey())
                 //自定义key的获取策略：默认KeyRandomStrategy
-                .keyStrategy(new KeyRandomStrategy())
-                .okHttpClient(okHttpClient)
+                .keyStrategy(new KeyRandomStrategy()).okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
@@ -238,5 +243,54 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     public Long calculateToken(List<TranslationData> translationData) {
         ChatCompletion chatCompletion = ChatCompletion.builder().messages(getMessages(translationData)).build();
         return chatCompletion.tokens();
+    }
+
+    /**
+     * 测试配置
+     *
+     * @param chatgptConfigVo
+     * @return
+     */
+    @Override
+    public ChatGptConfigTestVo testChatGptConfig(ChatGptConfigVo chatgptConfigVo) {
+        ChatGptConfigTestVo chatGptConfigTestVo = new ChatGptConfigTestVo();
+
+        //将对象转换为Map
+        Map<Long, String> translationDataMap = chatgptConfigVo.getTranslationDataList().stream().collect(Collectors.toMap(TranslationData::getId, TranslationData::getOriginalText));
+        String jsonStr = JSONUtil.toJsonStr(translationDataMap);
+
+        //开始翻译
+        Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfigVo.getPromptMultipleTranslations()).build();
+        Message user = Message.builder().role(Message.Role.USER).content(jsonStr).build();
+        //构建请求信息
+        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(Arrays.asList(system, user));
+        ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            //设置翻译结果成功
+            chatGptConfigTestVo.setPromptMultipleTranslationsSuccess(true);
+            try {
+                JSONObject parse = JSONUtil.parseObj(e.getMessage().getContent());
+            } catch (Exception exception) {
+                log.error("多条翻译测试失败 : {}", e.getMessage().getContent());
+                chatGptConfigTestVo.setPromptMultipleTranslationsSuccess(false);
+
+            }
+            chatGptConfigTestVo.setPromptMultipleTranslationsResult(e.getMessage().getContent());
+        });
+
+        //测试单条翻译
+        TranslationData translationData = chatgptConfigVo.getTranslationData();
+        Message system1 = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfigVo.getPromptSingleTranslations()).build();
+        Message user1 = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
+
+        ChatTranslationInfo chatTranslationInfo1 = getChatTranslationInfo(Arrays.asList(system1, user1));
+
+        ChatCompletionResponse chatCompletionResponse1 = chatTranslationInfo1.openAiClient().chatCompletion(chatTranslationInfo1.chatCompletion());
+        chatCompletionResponse1.getChoices().forEach(e -> {
+            log.info("收到的消息 : {}", e.getMessage().getContent());
+            chatGptConfigTestVo.setPromptSingleTranslationsResult(e.getMessage().getContent());
+        });
+        return chatGptConfigTestVo;
+
     }
 }

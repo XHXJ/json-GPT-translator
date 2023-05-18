@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xhxj.jsongpttranslator.dal.hsqldb.TranslateFileMapper">
+    <select id="queryByFileIdWhetherToTranslate" resultType="java.util.Map">
+        SELECT
+        FILE_ID AS fileId,
+        COUNT(CASE WHEN TRANSLATION_TEXT IS NULL THEN 1 END) AS notCompleted,
+        COUNT(CASE WHEN TRANSLATION_TEXT IS NOT NULL THEN 1 END) AS completed
+        FROM
+        TRANSLATIONS
+        WHERE
+        FILE_ID IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+        FILE_ID
+    </select>
+</mapper>

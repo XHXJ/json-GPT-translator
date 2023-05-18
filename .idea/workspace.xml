@@ -5,20 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9ab9fc14-0b2d-4952-b61e-2e8528bb34b2" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/configure.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/error/ErrorCodeConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/vo/ChatGptConfigTestVo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/vo/ChatGptConfigVo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/convert/ChatgptConfigConvert.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/framework/chatgptconfig/ChatgptConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/mapper/TranslateFileMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gpt-translator/src/main/resources/mapper/TranslateProjectsMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/api/query.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/query.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/key/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/key/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/query/project/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/query/project/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/query/translate/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/query/translate/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/upload/UploadFile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/upload/UploadFile.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/upload/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/upload/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/projects/ProjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/projects/ProjectsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/projects/vo/ProjectsPageReqVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/projects/vo/ProjectsPageReqVO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/translationdata/TranslationDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/translationdata/TranslationDataController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/OpenaiPropertiesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/OpenaiPropertiesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/vo/OpenaiPropertiesVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/vo/OpenaiPropertiesVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/dal/hsqldb/TranslateFileMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/dal/hsqldb/TranslateFileMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/dal/hsqldb/TranslateProjectsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/dal/hsqldb/TranslateProjectsMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationAsyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationAsyncService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationAsyncServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationAsyncServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translationdata/TranslationDataService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translationdata/TranslationDataService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translationdata/TranslationDataServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translationdata/TranslationDataServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,8 +39,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="Class" />
         <option value="Vue Composition API Component" />
+        <option value="Mybatis Mapper" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -48,7 +59,7 @@
     </option>
     <option name="enabledProfiles">
       <list>
-        <option value="dev" />
+        <option value="local" />
       </list>
     </option>
   </component>
@@ -73,7 +84,7 @@
     "WebServerToolWindowFactoryState": "false",
     "extract.method.default.visibility": "private",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/MyPrograms/javaProject/json-GPT-translator/gpt-translator-web",
+    "last_opened_file_path": "D:/MyProgramFiles/javaProject/json-GPT-translator/gpt-translator/src/main/resources/mapper",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -83,9 +94,9 @@
     "project.structure.last.edited": "SDK",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.5634296",
-    "settings.editor.selected.configurable": "settings.nodejs",
+    "settings.editor.selected.configurable": "Errors",
     "spring.configuration.checksum": "5c07c14dae92ee7569743a10920b6afa",
-    "ts.external.directory.path": "C:\\MyPrograms\\javaProject\\json-GPT-translator\\gpt-translator-web\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\MyProgramFiles\\javaProject\\json-GPT-translator\\gpt-translator-web\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -112,8 +123,17 @@
       <recent name="C:\MyPrograms\javaProject\json-GPT-translator\gpt-translator-web\src\components\uploadfilestart" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.xhxj.jsongpttranslator.controller.OpenaiProperties.error" />
       <recent name="com.xhxj.jsongpttranslator.framework.web.handler" />
     </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+        <option value="js.build_tools.npm" />
+      </set>
+    </option>
   </component>
   <component name="RunManager" selected="Spring Boot.JsonGptTranslatorApplication">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:5173">
@@ -178,6 +198,7 @@
       <workItem from="1684113221013" duration="2019000" />
       <workItem from="1684199646453" duration="2001000" />
       <workItem from="1684285414068" duration="49338000" />
+      <workItem from="1684405475643" duration="12210000" />
     </task>
     <servers />
   </component>
@@ -186,5 +207,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
