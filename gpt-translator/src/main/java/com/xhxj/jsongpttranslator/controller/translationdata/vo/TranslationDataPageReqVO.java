@@ -23,4 +23,8 @@ public class TranslationDataPageReqVO {
     private String translationText;
     @Schema(description = "是否翻译", type = "boolean")
     private Boolean isTranslation;
+    @Schema(description = "项目id")
+    private Integer projectId;
+    @Schema(description = "文件id")
+    private Integer fileId;
 }

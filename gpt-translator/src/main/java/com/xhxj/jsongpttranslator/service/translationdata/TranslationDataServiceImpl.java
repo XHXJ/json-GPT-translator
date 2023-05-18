@@ -4,17 +4,11 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.context.AnalysisContext;
-import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.alibaba.excel.write.metadata.WriteSheet;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.opencsv.CSVWriter;
 import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataPageReqVO;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateFile;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateProjects;
@@ -27,12 +21,18 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -47,9 +47,11 @@ import java.util.zip.ZipOutputStream;
 public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMapper, TranslationData> implements TranslationDataService {
 
     @Autowired
+    @Lazy
     private TranslateProjectsService translateProjectsService;
 
     @Autowired
+    @Lazy
     private TranslateFileService translateFileService;
 
 
@@ -58,6 +60,8 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
         LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
         wrapper
                 .eq(translationDataPageReqVO.getId() != null, TranslationData::getId, translationDataPageReqVO.getId())
+                .eq(translationDataPageReqVO.getFileId() != null, TranslationData::getFileId, translationDataPageReqVO.getFileId())
+                .eq(translationDataPageReqVO.getProjectId() != null, TranslationData::getProjectId, translationDataPageReqVO.getProjectId())
                 .isNotNull(BooleanUtils.toBoolean(translationDataPageReqVO.getIsTranslation()), TranslationData::getTranslationText)
                 .like(StringUtils.isNotBlank(translationDataPageReqVO.getOriginalText()), TranslationData::getOriginalText, translationDataPageReqVO.getOriginalText())
                 .like(StringUtils.isNotBlank(translationDataPageReqVO.getTranslationText()), TranslationData::getTranslationText, translationDataPageReqVO.getTranslationText())
@@ -66,11 +70,11 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     }
 
     @Override
-    public Integer readJsonFile(MultipartFile file) {
+    public Integer readJsonFile(MultipartFile file, String projectName) {
         try {
             //新建项目
             TranslateProjects translateProjects = new TranslateProjects()
-                    .setProjectName(file.getOriginalFilename());
+                    .setProjectName(projectName);
             translateProjectsService.save(translateProjects);
             //新建文件
             TranslateFile translateFile = new TranslateFile()
@@ -90,8 +94,8 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                             .setProjectId(translateProjects.getProjectId())
                             .setOriginalText(o))
                     .toList();
-            this.baseMapper.insertBatchSomeColumn(list);
-            return translateProjects.getProjectId();
+            batchInsert(list);
+            return list.size();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -116,12 +120,14 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     }
 
     @Override
-    public Integer readExcelFile(MultipartFile zipFile) {
-        // 获取zip文件中的csv文件
+    public Integer readExcelFile(MultipartFile zipFile, String projectName) {
+        //累计新增
+        int count = 0;
 
+        // 获取zip文件中的csv文件
         //创建项目名称
         TranslateProjects translateProjects = new TranslateProjects()
-                .setProjectName(zipFile.getOriginalFilename());
+                .setProjectName(projectName);
         translateProjectsService.save(translateProjects);
 
         try {
@@ -154,7 +160,8 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                                     .setSequence(i);
                             translationDataList.add(translationData);
                         }
-                        this.baseMapper.insertBatchSomeColumn(translationDataList);
+                        batchInsert(translationDataList);
+                        count += translationDataList.size();
                     }
                 }
                 zis.closeEntry(); // Move the closeEntry() method inside the while loop
@@ -166,7 +173,21 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
             return -1;
         }
 
-        return translateProjects.getProjectId();
+        return count;
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param translationDataList
+     */
+    private void batchInsert(List<TranslationData> translationDataList) {
+        int batchSize = 1000;
+        for (int i = 0; i < translationDataList.size(); i += batchSize) {
+            int endIndex = Math.min(i + batchSize, translationDataList.size());
+            List<TranslationData> sublist = translationDataList.subList(i, endIndex);
+            this.baseMapper.insertBatchSomeColumn(sublist);
+        }
     }
 
     /**

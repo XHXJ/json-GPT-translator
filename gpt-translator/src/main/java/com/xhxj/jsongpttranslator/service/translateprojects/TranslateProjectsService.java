@@ -7,9 +7,13 @@ import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataP
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateProjects;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 
+import java.util.List;
+
 public interface TranslateProjectsService extends IService<TranslateProjects> {
 
     IPage<TranslateProjects> page(ProjectsPageReqVO projectsPageReqVO);
 
+
+    List<TranslateProjects> vueSelect(ProjectsPageReqVO projectsPageReqVO);
 
 }

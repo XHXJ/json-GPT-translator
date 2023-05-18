@@ -44,22 +44,32 @@ public class TranslationDataController {
         return CommonResult.success(translationDataService.page(translationDataPageReqVO));
     }
 
+    @PutMapping("/update")
+    @Operation(summary = "更新翻译数据")
+    public CommonResult<Boolean> update(@RequestBody TranslationData translationData) {
+        return CommonResult.success(translationDataService.updateById(translationData));
+    }
+
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "上传翻译json文件")
-    public Integer uploadFile(
+    public CommonResult<Integer> uploadFile(
             @RequestParam("file")
             @Schema(description = "上传的文件", type = "string", format = "binary")
-            @RequestPart(value = "file") final MultipartFile file) {
-        return translationDataService.readJsonFile(file);
+            @RequestPart(value = "file") final MultipartFile file,
+            @Schema(name = "projectName", description = "项目名称", type = "string")
+            @RequestParam("projectName") String projectName) {
+        return CommonResult.success(translationDataService.readJsonFile(file,projectName));
     }
 
     @PostMapping(path = "/upload-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "上传翻译Excel文件(压缩包)")
-    public Integer uploadExcelFile(
+    public CommonResult<Integer> uploadExcelFile(
             @RequestParam("file")
             @Schema(description = "上传的文件", type = "string", format = "binary")
-            @RequestPart(value = "file") final MultipartFile file) {
-        return translationDataService.readExcelFile(file);
+            @RequestPart(value = "file") final MultipartFile file,
+            @Schema(name = "projectName", description = "项目名称", type = "string")
+            @RequestParam("projectName") String projectName) {
+        return CommonResult.success(translationDataService.readExcelFile(file,projectName));
     }
 
     @GetMapping("/export-excel")

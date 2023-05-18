@@ -15,6 +15,8 @@ public class ProjectsPageReqVO {
     private Integer pageNum = 1;
     @Schema(description = "每页条数", example = "10", type = "integer")
     private Integer pageSize = 10;
+    @Schema(description = "项目id")
+    private Long projectId;
     @Schema(description = "项目名称")
     private String projectName;
 }

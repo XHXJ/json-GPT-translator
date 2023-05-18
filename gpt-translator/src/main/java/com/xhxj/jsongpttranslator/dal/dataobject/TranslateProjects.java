@@ -1,9 +1,6 @@
 package com.xhxj.jsongpttranslator.dal.dataobject;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -24,4 +21,12 @@ public class TranslateProjects {
     private Integer projectId;
     @Schema(description = "项目名称")
     private String projectName;
+
+    @TableField(exist = false)
+    @Schema(description = "没翻译的数量")
+    private Long notCompleted;
+
+    @TableField(exist = false)
+    @Schema(description = "已翻译的数量")
+    private Long completed;
 }

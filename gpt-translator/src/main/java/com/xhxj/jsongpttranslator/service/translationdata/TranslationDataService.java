@@ -11,9 +11,10 @@ public interface TranslationDataService extends IService<TranslationData> {
      * 读取json文件
      *
      * @param file
+     * @param projectName
      * @return
      */
-    Integer readJsonFile(MultipartFile file);
+    Integer readJsonFile(MultipartFile file, String projectName);
 
     IPage<TranslationData> page(TranslationDataPageReqVO translationDataPageReqVO);
 
@@ -27,10 +28,11 @@ public interface TranslationDataService extends IService<TranslationData> {
     /**
      * 读取Excel文件
      *
-     * @param files csv文件
+     * @param files       csv文件
+     * @param projectName
      * @return
      */
-    Integer readExcelFile(MultipartFile files);
+    Integer readExcelFile(MultipartFile files, String projectName);
 
     byte[] exportExcel(Integer projects);
 }

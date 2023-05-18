@@ -90,31 +90,31 @@ watch(
       </el-menu-item>
     </el-menu>
     <div class="horizontal-header-right">
-      <!-- 菜单搜索 -->
-      <Search />
-      <!-- 通知 -->
-      <Notice id="header-notice" />
-      <!-- 退出登录 -->
-      <el-dropdown trigger="click">
-        <span class="el-dropdown-link navbar-bg-hover select-none">
-          <img
-            src="https://avatars.githubusercontent.com/u/44761321?v=4"
-            :style="avatarsStyle"
-          />
-          <p v-if="username" class="dark:text-white">{{ username }}</p>
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu class="logout">
-            <el-dropdown-item @click="logout">
-              <IconifyIconOffline
-                :icon="LogoutCircleRLine"
-                style="margin: 5px"
-              />
-              退出系统
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+<!--      &lt;!&ndash; 菜单搜索 &ndash;&gt;-->
+<!--      <Search />-->
+<!--      &lt;!&ndash; 通知 &ndash;&gt;-->
+<!--      <Notice id="header-notice" />-->
+<!--      &lt;!&ndash; 退出登录 &ndash;&gt;-->
+<!--      <el-dropdown trigger="click">-->
+<!--        <span class="el-dropdown-link navbar-bg-hover select-none">-->
+<!--          <img-->
+<!--            src="https://avatars.githubusercontent.com/u/44761321?v=4"-->
+<!--            :style="avatarsStyle"-->
+<!--          />-->
+<!--          <p v-if="username" class="dark:text-white">{{ username }}</p>-->
+<!--        </span>-->
+<!--        <template #dropdown>-->
+<!--          <el-dropdown-menu class="logout">-->
+<!--            <el-dropdown-item @click="logout">-->
+<!--              <IconifyIconOffline-->
+<!--                :icon="LogoutCircleRLine"-->
+<!--                style="margin: 5px"-->
+<!--              />-->
+<!--              退出系统-->
+<!--            </el-dropdown-item>-->
+<!--          </el-dropdown-menu>-->
+<!--        </template>-->
+<!--      </el-dropdown>-->
       <span
         class="set-icon navbar-bg-hover"
         title="打开项目配置"
