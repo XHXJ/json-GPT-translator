@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card>
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" >
         <el-tab-pane label="JSON文件上传" name="0">
           <UploadFile :title="jsonTitle"/>
         </el-tab-pane>
@@ -15,7 +15,6 @@
 
 <script lang="ts" setup>
 import {ref} from 'vue'
-import type {TabsPaneContext} from 'element-plus'
 import UploadFile from "./UploadFile.vue";
 
 const activeName = ref('0')

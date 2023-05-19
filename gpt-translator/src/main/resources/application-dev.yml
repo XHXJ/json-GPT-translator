@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:hsqldb:mem:translate
+    url: jdbc:hsqldb:file:db/translate;shutdown=true
     driver-class-name: org.hsqldb.jdbc.JDBCDriver
   sql:
     init:

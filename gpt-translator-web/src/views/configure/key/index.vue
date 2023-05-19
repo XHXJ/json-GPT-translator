@@ -27,8 +27,7 @@
     </div>
     <el-card>
       <h4 class="table-name">key 管理:</h4>
-      <el-table :data="table.data" style="width: 100%"
-      >
+      <el-table :data="table.data" style="width: 100%">
         <el-table-column prop="id" label="id" width="50"/>
         <el-table-column prop="openaiKey" label="key"/>
         <el-table-column label="操作" width="100">

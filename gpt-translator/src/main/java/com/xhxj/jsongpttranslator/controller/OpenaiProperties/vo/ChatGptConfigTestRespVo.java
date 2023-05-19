@@ -16,7 +16,7 @@ public class ChatGptConfigTestRespVo {
     private String promptSingleTranslationsResult;
 
     @Schema(description = "多条翻译结果")
-    private String promptMultipleTranslationsResult;
+    private Object promptMultipleTranslationsResult;
 
     @Schema(description = "多条翻译是否成功")
     private Boolean promptMultipleTranslationsSuccess;

@@ -34,4 +34,5 @@ public interface ChatGptTranslationAsyncService {
      */
     ChatGptConfigTestRespVo testChatGptConfig(ChatGptConfigTestVo chatgptConfigVo);
 
+
 }

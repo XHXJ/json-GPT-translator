@@ -5,5 +5,7 @@ defineOptions({
 </script>
 
 <template>
-  <h1>Pure-Admin-Thin（非国际化版本）</h1>
+  <div>
+    <h1>这是一个根据MTool和T++导出其原文用GPT翻译后输出的项目</h1>
+  </div>
 </template>

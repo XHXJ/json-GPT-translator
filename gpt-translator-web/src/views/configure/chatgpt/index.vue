@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <el-card>
@@ -15,14 +14,20 @@
               </el-upload>
               <el-button class="item" type="primary" @click="onImport">导出</el-button>
             </div>
-            <el-form-item label="多条翻译prompt定义:">
+            <el-form-item label="多行翻译prompt:">
               <el-input v-model="chagptForm.data.promptMultipleTranslations" autosize type="textarea"/>
             </el-form-item>
-            <el-form-item label="单条翻译prompt定义:">
+            <el-form-item label="单条翻译prompt:">
               <el-input v-model="chagptForm.data.promptSingleTranslations" autosize type="textarea"/>
             </el-form-item>
+            <el-divider/>
             <h4>核心配置:</h4>
             <el-form-item label="topP">
+
+              <div class="core-configuration-form">
+                <el-slider v-model="chagptForm.data.topP" show-input :min="0" :max="1" :step="0.01"
+                           class="item"/>
+              </div>
               <div style="padding-right: 20px">
                 <el-tooltip placement="top">
                   <template #content> 使用温度采样的替代方法称为核心采样，
@@ -32,11 +37,12 @@
                   <IconifyIconOffline :icon="InfoFilled"/>
                 </el-tooltip>
               </div>
-              <div style="width: 50%">
-                <el-slider v-model="chagptForm.data.topP" show-input :min="0" :max="1" :step="0.01" style="width: 80%"/>
-              </div>
             </el-form-item>
             <el-form-item label="temperature">
+              <div class="core-configuration-form">
+                <el-slider v-model="chagptForm.data.temperature" show-input :min="0" :max="2" :step="0.01"
+                           class="item"/>
+              </div>
               <div style="padding-right: 20px">
                 <el-tooltip placement="top">
                   <template #content> 使用什么取样温度，0到2之间。
@@ -46,12 +52,12 @@
                   <IconifyIconOffline :icon="InfoFilled"/>
                 </el-tooltip>
               </div>
-              <div style="width: 50%">
-                <el-slider v-model="chagptForm.data.temperature" show-input :min="0" :max="2" :step="0.01"
-                           style="width: 80%"/>
-              </div>
             </el-form-item>
             <el-form-item label="presencePenalty">
+              <div class="core-configuration-form">
+                <el-slider v-model="chagptForm.data.presencePenalty" show-input :min="0" :max="2" :step="0.01"
+                           class="item"/>
+              </div>
               <div style="padding-right: 20px">
                 <el-tooltip placement="top">
                   <template #content>
@@ -62,13 +68,14 @@
                   <IconifyIconOffline :icon="InfoFilled"/>
                 </el-tooltip>
               </div>
-              <div style="width: 50%">
-                <el-slider v-model="chagptForm.data.presencePenalty" show-input :min="0" :max="2" :step="0.01"
-                           style="width: 80%"/>
-              </div>
             </el-form-item>
             <el-form-item label="frequencyPenalty">
-              <div style="padding-right: 20px">
+
+              <div class="core-configuration-form">
+                <el-slider v-model="chagptForm.data.frequencyPenalty" show-input :min="0" :max="2" :step="0.01"
+                           class="item"/>
+              </div>
+              <div>
                 <el-tooltip placement="top">
                   <template #content>
                     到目前为止，根据新标记在文本中的现有频率，
@@ -79,11 +86,8 @@
                   <IconifyIconOffline :icon="InfoFilled"/>
                 </el-tooltip>
               </div>
-              <div style="width: 50%">
-                <el-slider v-model="chagptForm.data.frequencyPenalty" show-input :min="0" :max="2" :step="0.01"
-                           style="width: 80%"/>
-              </div>
             </el-form-item>
+            <el-divider/>
             <h4>代理配置:</h4>
             <el-form-item label="代理类型: ">
               <el-radio-group v-model="chagptForm.data.proxyType" class="ml-4">
@@ -101,68 +105,64 @@
         </el-tab-pane>
         <el-tab-pane label="测试" name="text">
           <el-form :model="chagptForm.data" label-width="150px">
-            <el-form-item label="多条翻译prompt定义:">
-              <el-input v-model="chagptForm.data.promptMultipleTranslations" disabled autosize type="textarea"/>
+            <el-form-item label="多行翻译prompt:">
+              <el-input v-model="chagptForm.data.promptMultipleTranslations" autosize type="textarea"/>
             </el-form-item>
-            <el-form-item label="单条翻译prompt定义:">
-              <el-input v-model="chagptForm.data.promptSingleTranslations" disabled autosize type="textarea"/>
+            <el-form-item label="单条翻译prompt:">
+              <el-input v-model="chagptForm.data.promptSingleTranslations" autosize type="textarea"/>
             </el-form-item>
           </el-form>
-          <el-card>
-            <template #header>
-              <span>翻译测试数据管理</span>
-            </template>
-            <h5>多行翻译测试数据: </h5>
-            <div class="file-import-export">
-              <el-button @click="onAddTestDataList" type="primary" link>新增翻译数据</el-button>
-            </div>
-            <el-table :data="chatGptTest.data.translationDataList" style="width: 100%" max-height="300">
-              <el-table-column prop="id" label="id" width="100"/>
-              <el-table-column prop="originalText" label="原文">
-                <template #default="scope">
-                  <el-input
-                    :autosize="{ minRows: 2, maxRows: 4 }"
-                    v-model="scope.row.originalText"
-                    type="textarea"
-                    placeholder="指定翻译原文"
-                  />
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="100">
-                <template #default="scope">
-                  <el-button type="danger" size="small" @click="onTestDataListDelete(scope.row.id) "
-                  >删除
-                  </el-button
-                  >
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-divider/>
-            <div style="margin-top: 20px">
-              <h5>单行测试数据: </h5>
-              <br>
-              <el-input
-                :autosize="{ minRows: 2, maxRows: 4 }"
-                v-model="chatGptTest.data.translationData.originalText"
-                type="textarea"
-                placeholder="指定翻译原文"
-              />
-            </div>
-          </el-card>
-
-          <div style="margin-top: 20px" v-if="displayResults">
+          <el-divider/>
+          <h5>多行翻译测试数据: </h5>
+          <div class="file-import-export">
+            <el-button @click="onAddTestDataList" type="primary" link>新增翻译数据</el-button>
+          </div>
+          <el-table :data="chatGptTest.data.translationDataList" style="width: 100%" max-height="300">
+            <el-table-column prop="id" label="id" width="100"/>
+            <el-table-column prop="originalText" label="原文">
+              <template #default="scope">
+                <el-input
+                  :autosize="{ minRows: 2, maxRows: 4 }"
+                  v-model="scope.row.originalText"
+                  type="textarea"
+                  placeholder="指定翻译原文"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100">
+              <template #default="scope">
+                <el-button type="danger" size="small" @click="onTestDataListDelete(scope.row.id) "
+                >删除
+                </el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-divider/>
+          <div style="margin-top: 20px">
+            <h5>单行测试数据: </h5>
+            <br>
+            <el-input
+              :autosize="{ minRows: 2, maxRows: 4 }"
+              v-model="chatGptTest.data.translationData.originalText"
+              type="textarea"
+              placeholder="指定翻译原文"
+            />
+          </div>
+          <el-divider/>
+          <div style="margin-top: 40px" v-if="displayResults">
             <el-card>
               <template #header>
-                <span>测试结果</span>
+                <span>测试结果:</span>
               </template>
               <div>
-                <div style="font-size: 12px;margin-bottom: 20px">多行翻译结果:</div>
-                <vue-json-pretty :data="JSON.parse(chatGptConfigTestRespVo.data.promptMultipleTranslationsResult)"/>
+                <div style="font-size: 15px;margin-bottom: 20px">多行翻译结果:</div>
+                <vue-json-pretty :data="chatGptConfigTestRespVo.data.promptMultipleTranslationsResult"/>
                 <el-tag v-if="!chatGptConfigTestRespVo.data.promptMultipleTranslationsSuccess" type="danger">
-                  多行翻译结果不通过
+                  多行翻译结果不通过,结果不符合Json格式
                 </el-tag>
                 <el-divider/>
-                <div style="font-size: 12px;margin-bottom: 20px">单行翻译结果:</div>
+                <div style="font-size: 15px;margin-bottom: 20px">单行翻译结果:</div>
                 <div>{{ chatGptConfigTestRespVo.data.promptSingleTranslationsResult }}</div>
               </div>
 
@@ -170,6 +170,7 @@
           </div>
 
           <div class="file-import-export" style="margin-top: 40px">
+            <el-button type="success" @click="onSubmit">保存配置文件</el-button>
             <el-button @click="onTestTranslation" type="primary">翻译测试</el-button>
           </div>
         </el-tab-pane>
@@ -191,8 +192,8 @@ import {ElLoading} from "element-plus";
 
 //测试结果
 interface ChatGptConfigTestRespInterface {
-  promptSingleTranslationsResult: object;
-  promptMultipleTranslationsResult: string;
+  promptSingleTranslationsResult: string;
+  promptMultipleTranslationsResult: object;
   promptMultipleTranslationsSuccess: boolean;
 }
 
@@ -218,16 +219,20 @@ const chatGptTest = reactive<{
     translationDataList: [
       {
         id: 0,
-        originalText: '你好'
+        originalText: '武器戦技を継承する\n'
       },
       {
         id: 1,
-        originalText: '测试'
+        originalText: 'アステルが目を開けて、光になって天に昇って行く二人を見送る\n'
+      },
+      {
+        id: 2,
+        originalText: 'performMiss'
       }
     ],
     translationData: {
       id: 0,
-      originalText: '日文测试'
+      originalText: 'もし、今の状況が自分らしくないことの連続で、好きになれないなら、どうすれば、変えられるかを真剣に考えてみよう。そしないと問題はちっとも解決しない。'
     }
   }
 });
@@ -285,7 +290,7 @@ const onSubmit = () => {
     if (res.code === 0) {
       message('修改配置成功', {type: 'success'})
     } else {
-      message('修改配置失败', {type: 'error'})
+      message(res.msg, {type: 'error'})
     }
     getConfigData()
   })
@@ -332,6 +337,15 @@ const activeName = ref('chagpt')
 
   .item {
     margin-left: 20px
+  }
+}
+
+.core-configuration-form {
+  width: 50%;
+  margin-left: 20px;
+
+  .item {
+    width: 95%
   }
 }
 </style>

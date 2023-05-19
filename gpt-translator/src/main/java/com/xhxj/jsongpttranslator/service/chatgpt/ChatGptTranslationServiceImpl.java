@@ -5,6 +5,7 @@ import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTe
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.framework.async.MissingRowData;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
 
     @Autowired
     private TranslationDataService translationDataService;
+
+    @Autowired
+    private MissingRowData missingRowData;
 
     //程序开始的唯一标识符
     private final AtomicBoolean startFlag = new AtomicBoolean(false);
@@ -61,11 +65,13 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             do {
                 List<TranslationData> multipleSentences = translationDataService.list(wrapper);
                 log.info("还有{}条句子未被翻译", multipleSentences.size());
-                //未翻译的句子小于200条
+                //未翻译的句子小于50条
                 if (multipleSentences.size() < 50) {
                     break;
                 }
                 runBatchTranslation(multipleSentences);
+                //处理缺行的数据
+                missingRowDataTranslation();
             } while (startFlag.get());
 
 
@@ -91,7 +97,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
 
 
         } catch (Exception e) {
-            log.error("程序运行出错 {}", e.getMessage());
+            log.error("程序运行出错", e);
         } finally {
             long endTime = System.currentTimeMillis(); // 记录结束时间
             long elapsedTimeMillis = endTime - startTime; // 计算耗时（毫秒）
@@ -100,6 +106,23 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             startFlag.set(false);
         }
     }
+
+    /**
+     * 处理缺行数据
+     */
+    private void missingRowDataTranslation() {
+        try {
+            log.info("开始处理缺行数据: {} 条", missingRowData.getMissingRowData().size());
+            List<CompletableFuture<Void>> task = new ArrayList<>(missingRowData.getMissingRowData().size());
+            missingRowData.getMissingRowData().forEach((k, v) -> task.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
+            //等待所有任务完成
+            CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
+            log.info("处理缺行数据完成");
+        } catch (Exception e) {
+            log.error("处理缺行数据失败:{}", e.getMessage());
+        }
+    }
+
 
     /**
      * 运行批量翻译

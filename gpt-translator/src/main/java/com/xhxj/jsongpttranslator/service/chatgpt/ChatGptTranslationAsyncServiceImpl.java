@@ -14,6 +14,7 @@ import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTe
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.framework.async.MissingRowData;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.framework.web.exception.ServiceException;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
@@ -63,6 +64,10 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
 
     private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
 
+
+
+    @Autowired
+    private MissingRowData missingRowDataConfig;
 
     /**
      * gpt配置
@@ -154,8 +159,34 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         chatCompletionResponse.getChoices().forEach(e -> {
             log.info("收到的消息 : {}", e.getMessage().getContent());
             JSONObject parse = null;
+            try {
+                parse = JSONUtil.parseObj(e.getMessage().getContent());
+                if (parse.size() != translationData.size()) {
+                    //如果出现缺行将出现缺行的句子添加到队列
+                    //寻找缺行的数据
+                    for (int i = 0; i < translationData.size(); i++) {
+                        TranslationData translationDatum = translationData.get(i);
+                        if (!parse.containsKey(translationDatum.getId().toString())) {
+                            log.info("缺行的数据: {}", translationDatum);
+                            missingRowDataConfig.getMissingRowData().put(translationDatum.getId(), translationDatum);
 
-            parse = JSONUtil.parseObj(e.getMessage().getContent());
+                            // 获取上一行和下一行，如果存在的话
+                            if (i > 0) {
+                                TranslationData prevData = translationData.get(i - 1);
+                                log.info("上一行的数据: {}", prevData);
+                                missingRowDataConfig.getMissingRowData().put(translationDatum.getId(), prevData);
+                            }
+                            if (i < translationData.size() - 1) {
+                                TranslationData nextData = translationData.get(i + 1);
+                                log.info("下一行的数据: {}", nextData);
+                                missingRowDataConfig.getMissingRowData().put(translationDatum.getId(), nextData);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception jsonException) {
+                log.error("解析json异常");
+            }
 
             //取出key更新对应的TranslationData
             List<TranslationData> updatedTranslationDataList = new ArrayList<>();
@@ -289,12 +320,13 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
             chatGptConfigTestRespVo.setPromptMultipleTranslationsSuccess(true);
             try {
                 JSONObject parse = JSONUtil.parseObj(e.getMessage().getContent());
+                chatGptConfigTestRespVo.setPromptMultipleTranslationsResult(parse);
             } catch (Exception exception) {
                 log.error("多条翻译测试失败 : {}", e.getMessage().getContent());
                 chatGptConfigTestRespVo.setPromptMultipleTranslationsSuccess(false);
-
+                chatGptConfigTestRespVo.setPromptMultipleTranslationsResult(e.getMessage().getContent());
             }
-            chatGptConfigTestRespVo.setPromptMultipleTranslationsResult(e.getMessage().getContent());
+
         });
 
         //测试单条翻译
@@ -312,4 +344,5 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         return chatGptConfigTestRespVo;
 
     }
+
 }

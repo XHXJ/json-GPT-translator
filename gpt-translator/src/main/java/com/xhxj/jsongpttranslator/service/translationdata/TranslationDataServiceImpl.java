@@ -19,6 +19,7 @@ import com.xhxj.jsongpttranslator.service.translatefile.TranslateFileService;
 import com.xhxj.jsongpttranslator.service.translateprojects.TranslateProjectsService;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -62,10 +63,13 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                 .eq(translationDataPageReqVO.getId() != null, TranslationData::getId, translationDataPageReqVO.getId())
                 .eq(translationDataPageReqVO.getFileId() != null, TranslationData::getFileId, translationDataPageReqVO.getFileId())
                 .eq(translationDataPageReqVO.getProjectId() != null, TranslationData::getProjectId, translationDataPageReqVO.getProjectId())
-                .isNotNull(BooleanUtils.toBoolean(translationDataPageReqVO.getIsTranslation()), TranslationData::getTranslationText)
                 .like(StringUtils.isNotBlank(translationDataPageReqVO.getOriginalText()), TranslationData::getOriginalText, translationDataPageReqVO.getOriginalText())
                 .like(StringUtils.isNotBlank(translationDataPageReqVO.getTranslationText()), TranslationData::getTranslationText, translationDataPageReqVO.getTranslationText())
         ;
+        if (ObjectUtils.isNotEmpty(translationDataPageReqVO.getIsTranslation())) {
+            wrapper.isNotNull(translationDataPageReqVO.getIsTranslation(), TranslationData::getTranslationText);
+            wrapper.isNull(!translationDataPageReqVO.getIsTranslation(), TranslationData::getTranslationText);
+        }
         return this.page(new Page<>(translationDataPageReqVO.getPageNum(), translationDataPageReqVO.getPageSize()), wrapper);
     }
 

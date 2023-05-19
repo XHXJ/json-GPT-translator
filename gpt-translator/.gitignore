@@ -34,3 +34,4 @@ build/
 
 /src/main/resources/application-dev.yml
 /db/
+/logs/
