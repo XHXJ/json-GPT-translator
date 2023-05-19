@@ -1,5 +1,6 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
@@ -31,6 +32,6 @@ public interface ChatGptTranslationAsyncService {
      * @param chatgptConfigVo
      * @return
      */
-    ChatGptConfigTestVo testChatGptConfig(ChatGptConfigVo chatgptConfigVo);
+    ChatGptConfigTestRespVo testChatGptConfig(ChatGptConfigTestVo chatgptConfigVo);
 
 }

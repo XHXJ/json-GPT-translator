@@ -1,10 +1,12 @@
 package com.xhxj.jsongpttranslator.controller.OpenaiProperties;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.OpenaiPropertiesVO;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.OpenaiPropertiesVO;
 import com.xhxj.jsongpttranslator.convert.ChatgptConfigConvert;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
@@ -12,13 +14,21 @@ import com.xhxj.jsongpttranslator.framework.web.pojo.CommonResult;
 import com.xhxj.jsongpttranslator.service.chatgpt.ChatGptTranslationService;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -79,22 +89,79 @@ public class OpenaiPropertiesController {
 
     @PostMapping("/chat-gpt-config-test")
     @Operation(summary = "测试chatGpt的配置")
-    public CommonResult<ChatGptConfigTestVo> testChatGptConfig(@RequestBody ChatGptConfigVo chatgptConfigVo) {
+    public CommonResult<ChatGptConfigTestRespVo> testChatGptConfig(@Valid @RequestBody ChatGptConfigTestVo chatgptConfigVo) {
 
         return CommonResult.success(chatGptTranslationService.testChatGptConfig(chatgptConfigVo));
     }
 
-    @PutMapping("/prompt-single")
-    @Operation(summary = "修改gpt的prompt设置")
-    public CommonResult<String> updateSingle(@RequestBody String newPrompt) {
-        chatgptConfig.setPromptSingleTranslations(newPrompt);
+    @PutMapping("/chat-gpt-config")
+    @Operation(summary = "修改gpt的设置")
+    public CommonResult<String> updateChatGptConfig(@Valid @RequestBody ChatGptConfigVo newConfig) {
+        convetter(newConfig);
         return CommonResult.success("修改成功");
     }
 
-    @PutMapping("/prompt-multiple")
-    @Operation(summary = "修改gpt的多条prompt设置")
-    public CommonResult<String> updatePromptMultiple(@RequestBody String newPrompt) {
-        chatgptConfig.setPromptMultipleTranslations(newPrompt);
-        return CommonResult.success("修改成功");
+
+    @GetMapping("/chat-gpt-export")
+    @Operation(summary = "导出chatGpt的配置")
+    public void exportChatGptConfig(HttpServletResponse response) {
+
+        try {
+            // 获取翻译后的 JSON 字符串
+            String jsonStr = JSONUtil.toJsonStr(ChatgptConfigConvert.INSTANCE.convert(chatgptConfig));
+
+            // 设置响应头以指示浏览器下载文件
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; filename=Config.json");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+            // 将文件内容写入响应
+            response.getWriter().write(jsonStr);
+            response.getWriter().flush();
+            response.getWriter().close();
+        } catch (IOException e) {
+            // 处理异常，例如记录错误或返回错误响应
+            e.printStackTrace();
+        }
+
     }
+
+    @PostMapping(path = "/chat-gpt-import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "导入chatGpt的配置")
+    public CommonResult<String> importChatGptConfig(@RequestParam("file")
+                                                    @Schema(description = "上传的文件", type = "string", format = "binary")
+                                                    @RequestPart(value = "file") final MultipartFile file) throws IOException {
+        InputStream inputStream = file.getInputStream();
+        //将文件流转换为字符串
+        Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+        String fileAsString = scanner.hasNext() ? scanner.next() : "";
+        scanner.close();
+        //将字符串转换为对象
+        ChatGptConfigVo chatGptConfigVo = JSONUtil.toBean(fileAsString, ChatGptConfigVo.class);
+
+        convetter(chatGptConfigVo);
+
+        return CommonResult.success("导入成功");
+    }
+
+    /**
+     * 设置chatGpt的配置
+     *
+     * @param chatGptConfigVo
+     */
+    private void convetter(ChatGptConfigVo chatGptConfigVo) {
+
+        chatgptConfig.setPromptSingleTranslations(chatGptConfigVo.getPromptSingleTranslations());
+        chatgptConfig.setPromptMultipleTranslations(chatGptConfigVo.getPromptMultipleTranslations());
+        chatgptConfig.setTopP(chatGptConfigVo.getTopP());
+        chatgptConfig.setTemperature(chatGptConfigVo.getTemperature());
+        chatgptConfig.setPresencePenalty(chatGptConfigVo.getPresencePenalty());
+        chatgptConfig.setFrequencyPenalty(chatGptConfigVo.getFrequencyPenalty());
+        chatgptConfig.setProxyUlr(chatGptConfigVo.getProxyUlr());
+        chatgptConfig.setProxyPort(chatGptConfigVo.getProxyPort());
+        chatgptConfig.setProxyType(chatGptConfigVo.getProxyType());
+
+    }
+
+
 }

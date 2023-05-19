@@ -35,7 +35,9 @@ public class TranslateProjectsServiceImpl extends ServiceImpl<TranslateProjectsM
         wrapper.like(StringUtils.isNotBlank(projectsPageReqVO.getProjectName()), TranslateProjects::getProjectName, projectsPageReqVO.getProjectName());
         wrapper.orderByDesc(TranslateProjects::getProjectId);
         Page<TranslateProjects> page = page(new Page<>(projectsPageReqVO.getPageNum(), projectsPageReqVO.getPageSize()), wrapper);
-
+        if (ObjectUtils.isEmpty(page.getRecords())) {
+            return page;
+        }
         //获取翻译进度
         Map<Integer, Object> whetherToTranslate = this.baseMapper.queryByProjectIdWhetherToTranslate(page.getRecords().stream().map(TranslateProjects::getProjectId).toList());
         page.getRecords().forEach(v -> {

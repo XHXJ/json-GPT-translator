@@ -34,6 +34,9 @@ public class TranslateFileServiceImpl extends ServiceImpl<TranslateFileMapper, T
         LambdaQueryWrapper<TranslateFile> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TranslateFile::getProjectId, projectId);
         List<TranslateFile> translateFiles = this.baseMapper.selectList(wrapper);
+        if (ObjectUtils.isEmpty(translateFiles)) {
+            return null;
+        }
         //根据文件id查询是否翻译数据
         List<Integer> list = translateFiles.stream().map(TranslateFile::getFileId).toList();
         Map<Integer,Object> whetherToTranslate =  this.baseMapper.queryByFileIdWhetherToTranslate(list);

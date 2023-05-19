@@ -1,5 +1,6 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 
@@ -17,5 +18,5 @@ public interface ChatGptTranslationService {
     /**
      * 测试翻译
      */
-    ChatGptConfigTestVo testChatGptConfig(ChatGptConfigVo chatgptConfigVo);
+    ChatGptConfigTestRespVo testChatGptConfig(ChatGptConfigTestVo chatgptConfigVo);
 }

@@ -11,3 +11,13 @@ export const openaiPropertiesCreateKey = (data?: object) => {
 export const openaiPropertiesDelete = (params?: object) => {
   return http.request("delete", "/api/openai-properties/delete", {params});
 };
+export const getChatGptConfig = (params?: object) => {
+  return http.request("get", "/api/openai-properties/chat-gpt-config", {params});
+};
+
+export const updateChatGptConfig = (data?: object) => {
+  return http.request("put", "/api/openai-properties/chat-gpt-config", {data});
+};
+export const testChatGptConfig = (data?: object) => {
+  return http.request("post", "/api/openai-properties/chat-gpt-config-test", {data});
+};

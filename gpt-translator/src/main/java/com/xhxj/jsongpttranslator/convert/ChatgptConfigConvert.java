@@ -15,4 +15,5 @@ public interface ChatgptConfigConvert {
     ChatgptConfigConvert INSTANCE = Mappers.getMapper(ChatgptConfigConvert.class);
 
     ChatGptConfigVo convert(ChatgptConfig chatgptConfig);
+
 }

@@ -16,10 +16,10 @@ export default {
     },
     {
       path: "/fighting/effort",
-      name: "prompt",
-      component: () => import("@/views/configure/prompt/index.vue"),
+      name: "chatgpt",
+      component: () => import("@/views/configure/chatgpt/index.vue"),
       meta: {
-        title: "prompt配置"
+        title: "chatgpt配置"
       }
     }
   ]

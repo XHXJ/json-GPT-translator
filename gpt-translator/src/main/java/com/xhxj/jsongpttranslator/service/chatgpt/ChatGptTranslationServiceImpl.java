@@ -1,6 +1,7 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
@@ -159,7 +160,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     }
 
     @Override
-    public ChatGptConfigTestVo testChatGptConfig(ChatGptConfigVo chatgptConfigVo) {
+    public ChatGptConfigTestRespVo testChatGptConfig(ChatGptConfigTestVo chatgptConfigVo) {
 
         return chatGptTranslationAsyncService.testChatGptConfig(chatgptConfigVo);
     }
