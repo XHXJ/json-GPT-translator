@@ -238,8 +238,11 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
             //创建zip文件
             translateFiles.forEach(o -> {
                 try {
+                    //获取文件名
+                    String[] parts = o.getFileName().split("/");
+                    String extractedFileName = parts[parts.length - 1];
                     //创建zip文件
-                    zipOutputStream.putNextEntry(new ZipEntry(o.getFileName()));
+                    zipOutputStream.putNextEntry(new ZipEntry(extractedFileName + ".xlsx"));
 
                     //获取翻译数据
                     List<TranslationData> translationData = collect.get(o.getFileId());

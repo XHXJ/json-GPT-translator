@@ -117,6 +117,8 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             missingRowData.getMissingRowData().forEach((k, v) -> task.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
             //等待所有任务完成
             CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
+            //清除缺行数据
+            missingRowData.getMissingRowData().clear();
             log.info("处理缺行数据完成");
         } catch (Exception e) {
             log.error("处理缺行数据失败:{}", e.getMessage());
