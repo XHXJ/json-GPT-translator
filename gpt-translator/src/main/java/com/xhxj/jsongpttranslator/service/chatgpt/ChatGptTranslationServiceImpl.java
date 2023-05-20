@@ -3,10 +3,9 @@ package com.xhxj.jsongpttranslator.service.chatgpt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
-import com.xhxj.jsongpttranslator.framework.async.MissingRowData;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,8 +33,11 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     @Autowired
     private TranslationDataService translationDataService;
 
-    @Autowired
-    private MissingRowData missingRowData;
+    @Resource(name = "missingRowData")
+    private Map<Long, TranslationData> missingRowData;
+
+    @Resource(name = "errorData")
+    private Map<Long, TranslationData> errorData;
 
     //程序开始的唯一标识符
     private final AtomicBoolean startFlag = new AtomicBoolean(false);
@@ -83,16 +86,8 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                 if (singleSentence.size() == 0) {
                     return;
                 }
-                try {
-                    List<CompletableFuture<Void>> task = new ArrayList<>(singleSentence.size());
-                    for (TranslationData translationData : singleSentence) {
-                        task.add(chatGptTranslationAsyncService.accessingChatGptOne(translationData));
-                    }
-                    //等待所有任务完成
-                    CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
-                } catch (Exception e) {
-                    log.error("单条翻译出错 {}", e.getMessage());
-                }
+                //单条翻译
+                runOneTranslation(singleSentence);
             } while (startFlag.get());
 
 
@@ -108,17 +103,43 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     }
 
     /**
+     * 单条翻译
+     *
+     * @param singleSentence
+     */
+    private void runOneTranslation(List<TranslationData> singleSentence) {
+        try {
+            List<CompletableFuture<Void>> task = new ArrayList<>(singleSentence.size());
+            for (TranslationData translationData : singleSentence) {
+                task.add(chatGptTranslationAsyncService.accessingChatGptOne(translationData));
+            }
+            //等待所有任务完成
+            CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
+        } catch (Exception e) {
+            log.error("单条翻译出错 {}", e.getMessage());
+        }
+    }
+
+    /**
      * 处理缺行数据
      */
     private void missingRowDataTranslation() {
         try {
-            log.info("开始处理缺行数据: {} 条", missingRowData.getMissingRowData().size());
-            List<CompletableFuture<Void>> task = new ArrayList<>(missingRowData.getMissingRowData().size());
-            missingRowData.getMissingRowData().forEach((k, v) -> task.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
+            log.info("开始处理缺行数据: {} 条", missingRowData.size());
+            List<CompletableFuture<Void>> task = new ArrayList<>(missingRowData.size());
+            missingRowData.forEach((k,v) -> task.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
             //等待所有任务完成
             CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
             //清除缺行数据
-            missingRowData.getMissingRowData().clear();
+            missingRowData.clear();
+            //处理翻译错误的数据
+            while (errorData.size() > 0) {
+                log.info("开始处理调用错误的数据: {} 条", errorData.size());
+                List<CompletableFuture<Void>> errorTask = new ArrayList<>(errorData.size());
+                errorData.forEach((k,v) -> errorTask.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
+                //等待所有任务完成
+                CompletableFuture.allOf(errorTask.toArray(new CompletableFuture<?>[0])).join();
+            }
             log.info("处理缺行数据完成");
         } catch (Exception e) {
             log.error("处理缺行数据失败:{}", e.getMessage());
@@ -133,7 +154,6 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
      */
     private void runBatchTranslation(List<TranslationData> list) {
         try {
-
             List<List<TranslationData>> batchList = splitList(list);
 
             List<CompletableFuture<Objects>> task = new ArrayList<>(batchList.size());

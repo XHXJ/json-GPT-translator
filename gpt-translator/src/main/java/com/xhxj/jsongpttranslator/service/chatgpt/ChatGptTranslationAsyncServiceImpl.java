@@ -14,11 +14,11 @@ import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTe
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
-import com.xhxj.jsongpttranslator.framework.async.MissingRowData;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.framework.web.exception.ServiceException;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.xhxj.jsongpttranslator.controller.OpenaiProperties.error.ErrorCodeConstants.OPENAIKEY_DOES_NOT_EXIST;
@@ -60,14 +61,16 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     private long lastMinuteTimestamp = System.currentTimeMillis();
     private static int MAX_API_CALLS_PER_MINUTE = 3000; // 每分钟的API调用限制 (RPM)
     private static int MAX_TOKENS_PER_MINUTE = 300000; // 每分钟的令牌限制 (TPM)
-    private static int MAX_REQUESTS_PER_SECOND = 5; // 每秒最大请求速率
+    private static int MAX_REQUESTS_PER_SECOND = 2; // 每秒最大请求速率
 
     private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
 
 
+    @Resource(name = "missingRowData")
+    private Map<Long, TranslationData> missingRowData;
 
-    @Autowired
-    private MissingRowData missingRowDataConfig;
+    @Resource(name = "errorData")
+    private Map<Long, TranslationData> errorData;
 
     /**
      * gpt配置
@@ -148,59 +151,72 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     @Async("chatGptTaskExecutor")
     @Override
     public CompletableFuture<Objects> accessingChatGpt(List<TranslationData> translationData) {
+        try {
+            //构建请求信息
+            ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(getMessages(translationData));
+            log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
+            //限制每分钟的API调用
+            waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
 
-        //构建请求信息
-        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(getMessages(translationData));
-        log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
-        //限制每分钟的API调用
-        waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
+            ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
+            chatCompletionResponse.getChoices().forEach(e -> {
+                log.info("收到的消息 : {}", e.getMessage().getContent());
+                JSONObject parse = null;
+                try {
+                    parse = JSONUtil.parseObj(e.getMessage().getContent());
+                    if (parse.size() != translationData.size()) {
+                        //如果出现缺行将出现缺行的句子添加到队列
+                        //寻找缺行的数据
+                        Map<Long, TranslationData> dataById = translationData.stream()
+                                .collect(Collectors.toMap(TranslationData::getId, Function.identity()));
+                        for (TranslationData translationDatum : translationData) {
+                            if (!parse.containsKey(translationDatum.getId().toString())) {
+                                log.info("缺行的数据: {}", translationDatum);
+                                missingRowData.put(translationDatum.getId(), translationDatum);
 
-        ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
-        chatCompletionResponse.getChoices().forEach(e -> {
-            log.info("收到的消息 : {}", e.getMessage().getContent());
-            JSONObject parse = null;
-            try {
-                parse = JSONUtil.parseObj(e.getMessage().getContent());
-                if (parse.size() != translationData.size()) {
-                    //如果出现缺行将出现缺行的句子添加到队列
-                    //寻找缺行的数据
-                    for (int i = 0; i < translationData.size(); i++) {
-                        TranslationData translationDatum = translationData.get(i);
-                        if (!parse.containsKey(translationDatum.getId().toString())) {
-                            log.info("缺行的数据: {}", translationDatum);
-                            missingRowDataConfig.getMissingRowData().put(translationDatum.getId(), translationDatum);
+                                // 获取上一行和下一行，如果存在的话
+                                Long id = translationDatum.getId();
 
-                            // 获取上一行和下一行，如果存在的话
-                            if (i > 0) {
-                                TranslationData prevData = translationData.get(i - 1);
-                                log.info("上一行的数据: {}", prevData);
-                                missingRowDataConfig.getMissingRowData().put(translationDatum.getId(), prevData);
-                            }
-                            if (i < translationData.size() - 1) {
-                                TranslationData nextData = translationData.get(i + 1);
-                                log.info("下一行的数据: {}", nextData);
-                                missingRowDataConfig.getMissingRowData().put(translationDatum.getId(), nextData);
+                                TranslationData prevData = dataById.getOrDefault(id - 1, null);
+                                TranslationData nextData = dataById.getOrDefault(id + 1, null);
+
+
+                                if (prevData != null) {
+                                    log.info("上一行的数据: {}", prevData);
+                                    missingRowData.put(prevData.getId(), prevData);
+                                }
+
+                                if (nextData != null) {
+                                    log.info("下一行的数据: {}", nextData);
+                                    missingRowData.put(nextData.getId(), nextData);
+                                }
                             }
                         }
                     }
+                } catch (Exception jsonException) {
+                    log.error("解析json异常 {}", e.getMessage());
                 }
-            } catch (Exception jsonException) {
-                log.error("解析json异常");
-            }
 
-            //取出key更新对应的TranslationData
-            List<TranslationData> updatedTranslationDataList = new ArrayList<>();
-            for (Map.Entry<String, Object> stringObjectEntry : parse) {
-                Long id = Long.valueOf(stringObjectEntry.getKey());
-                String translatedText = stringObjectEntry.getValue().toString();
-                TranslationData updatedTranslationData = new TranslationData();
-                updatedTranslationData.setId(id);
-                updatedTranslationData.setTranslationText(translatedText);
-                updatedTranslationDataList.add(updatedTranslationData);
-            }
-            translationDataService.updateBatchById(updatedTranslationDataList);
-        });
+                //取出key更新对应的TranslationData
+                List<TranslationData> updatedTranslationDataList = new ArrayList<>();
+                if (parse != null) {
+                    for (Map.Entry<String, Object> stringObjectEntry : parse) {
+                        Long id = Long.valueOf(stringObjectEntry.getKey());
+                        String translatedText = stringObjectEntry.getValue().toString();
+                        TranslationData updatedTranslationData = new TranslationData();
+                        updatedTranslationData.setId(id);
+                        updatedTranslationData.setTranslationText(translatedText);
+                        updatedTranslationDataList.add(updatedTranslationData);
+                    }
+                }
+                translationDataService.updateBatchById(updatedTranslationDataList);
+            });
 
+        } catch (com.unfbx.chatgpt.exception.BaseException e) {
+            log.warn("批量翻译openai调用异常 {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("批量翻译任务异常", e);
+        }
         return CompletableFuture.completedFuture(null);
     }
 
@@ -225,22 +241,35 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     @Async("chatGptTaskExecutor")
     @Override
     public CompletableFuture<Void> accessingChatGptOne(TranslationData translationData) {
+        try {
 
-        //开始翻译
-        Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfig.getPromptSingleTranslations()).build();
-        Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
 
-        ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(Arrays.asList(system, user));
-        log.info("翻译单独句子id {} ,消耗tokens :{}", translationData.getId(), chatTranslationInfo.chatCompletion().tokens());
-        //限制每分钟的API调用
-        waitForApiCallAvailability(chatTranslationInfo.chatCompletion().tokens());
+            //开始翻译
+            Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfig.getPromptSingleTranslations()).build();
+            Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
 
-        ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient().chatCompletion(chatTranslationInfo.chatCompletion());
-        chatCompletionResponse.getChoices().forEach(e -> {
-            log.info("收到的消息 : {}", e.getMessage().getContent());
-            translationData.setTranslationText(e.getMessage().getContent());
-            translationDataService.updateById(translationData);
-        });
+            ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(Arrays.asList(system, user));
+            log.info("翻译单独句子id {} ,消耗tokens :{}", translationData.getId(), chatTranslationInfo.chatCompletion().tokens());
+            //限制每分钟的API调用
+            waitForApiCallAvailability(chatTranslationInfo.chatCompletion().tokens());
+
+            ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient().chatCompletion(chatTranslationInfo.chatCompletion());
+            chatCompletionResponse.getChoices().forEach(e -> {
+                log.info("收到的消息 : {}", e.getMessage().getContent());
+                translationData.setTranslationText(e.getMessage().getContent());
+                translationDataService.updateById(translationData);
+            });
+            //如果正常翻译成功要删除翻译错误的数据
+            errorData.remove(translationData.getId());
+        } catch (com.unfbx.chatgpt.exception.BaseException e) {
+            //openai调用异常需要重新翻译
+            log.warn("单条openai调用异常需要重新翻译 {}", e.getMessage());
+            errorData.put(translationData.getId(), translationData);
+        } catch (Exception e) {
+            //其他异常也需要重新翻译
+            log.error("单独句子翻译异常 {}", e.getMessage());
+            errorData.put(translationData.getId(), translationData);
+        }
         return CompletableFuture.completedFuture(null);
     }
 
