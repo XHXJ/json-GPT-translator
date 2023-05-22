@@ -28,7 +28,7 @@
     </div>
 
     <el-card>
-      <h4 class="table-name">翻译查询:</h4>
+      <h4 class="table-name">项目查询:</h4>
       <el-table :data="table.data" style="width: 100%"
                 border @expandChange="expandChange">
         <!--获取文件信息-->
