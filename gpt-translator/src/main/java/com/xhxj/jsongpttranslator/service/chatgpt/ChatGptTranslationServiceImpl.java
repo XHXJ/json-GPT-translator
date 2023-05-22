@@ -64,7 +64,8 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             log.info("程序开始");
             //查询需要翻译的句子
             LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
-            wrapper.isNull(TranslationData::getTranslationText);
+            wrapper.isNull(TranslationData::getTranslationText)
+                    .last("limit 1000");
             do {
                 List<TranslationData> multipleSentences = translationDataService.list(wrapper);
                 log.info("还有{}条句子未被翻译", multipleSentences.size());
@@ -127,7 +128,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
         try {
             log.info("开始处理缺行数据: {} 条", missingRowData.size());
             List<CompletableFuture<Void>> task = new ArrayList<>(missingRowData.size());
-            missingRowData.forEach((k,v) -> task.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
+            missingRowData.forEach((k, v) -> task.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
             //等待所有任务完成
             CompletableFuture.allOf(task.toArray(new CompletableFuture<?>[0])).join();
             //清除缺行数据
@@ -136,7 +137,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             while (errorData.size() > 0) {
                 log.info("开始处理调用错误的数据: {} 条", errorData.size());
                 List<CompletableFuture<Void>> errorTask = new ArrayList<>(errorData.size());
-                errorData.forEach((k,v) -> errorTask.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
+                errorData.forEach((k, v) -> errorTask.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
                 //等待所有任务完成
                 CompletableFuture.allOf(errorTask.toArray(new CompletableFuture<?>[0])).join();
             }
