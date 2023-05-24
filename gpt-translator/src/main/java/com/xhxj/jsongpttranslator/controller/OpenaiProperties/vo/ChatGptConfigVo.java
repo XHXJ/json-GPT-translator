@@ -66,5 +66,12 @@ public class ChatGptConfigVo {
      */
     private String proxyType;
 
+    /**
+     * 使用模型的名称
+     */
+    private String model;
+
+    private String apiHost;
+
 
 }

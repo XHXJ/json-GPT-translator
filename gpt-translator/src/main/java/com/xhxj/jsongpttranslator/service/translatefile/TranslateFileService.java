@@ -22,4 +22,10 @@ public interface TranslateFileService extends IService<TranslateFile> {
      */
     List<TranslateFile> vueSelect( Long projectId, String fileName);
 
+    /**
+     * 删除文件
+     * @param id
+     * @return
+     */
+    Boolean deleteFile(Long id);
 }

@@ -3,6 +3,7 @@ package com.xhxj.jsongpttranslator.service.translatefile;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateFile;
+import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.dal.hsqldb.TranslateFileMapper;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import org.apache.commons.lang3.ObjectUtils;
@@ -50,7 +51,6 @@ public class TranslateFileServiceImpl extends ServiceImpl<TranslateFileMapper, T
                 v.setCompleted((Long) data.get("COMPLETED"));
                 v.setNotCompleted((Long) data.get("NOTCOMPLETED"));
             }
-
         });
         return translateFiles;
     }
@@ -61,5 +61,21 @@ public class TranslateFileServiceImpl extends ServiceImpl<TranslateFileMapper, T
         wrapper.eq(ObjectUtils.isNotEmpty(projectId), TranslateFile::getProjectId, projectId);
         wrapper.like(TranslateFile::getFileName, fileName);
         return this.baseMapper.selectList(wrapper);
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Boolean deleteFile(Long id) {
+        //删除翻译数据
+        LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TranslationData::getFileId, id);
+        translationDataService.remove(wrapper);
+
+        return removeById(id);
     }
 }

@@ -34,31 +34,44 @@
         <!--获取文件信息-->
         <el-table-column type="expand">
           <template #default="props">
-            <el-card>
-              <div>
+              <div style="padding: 10px 30px 10px 30px">
                 <h3>文件列表:</h3>
                 <el-table :data="childrenTable.get(props.row.projectId)" :border="false">
                   <el-table-column label="文件名" prop="fileName"/>
+                  <el-table-column label="操作" width="200px">
+                    <template #default="scope">
+                      <el-button size="small" @click="queryFile(scope.row.projectId, scope.row.fileId)">
+                        查看翻译
+                      </el-button>
+                      <el-popconfirm @confirm="onDeleteFile(scope.row.fileId)"
+                                     :title="'是否删除 ' + scope.row.fileName + '?'">
+                        <template #reference>
+                          <el-button size="small" type="danger">删除</el-button>
+                        </template>
+                      </el-popconfirm>
+                    </template>
+                  </el-table-column>
                   <el-table-column width="200" label="翻译进度">
                     <template #default="scope">
                       <el-progress :percentage="calcPercentage(scope.row.notCompleted, scope.row.completed)"/>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作">
-                    <template #default="scope">
-                      <el-button size="small" @click="queryFile(scope.row.projectId, scope.row.fileId)"
-                      >查看翻译
-                      </el-button
-                      >
-                    </template>
-                  </el-table-column>
                 </el-table>
               </div>
-            </el-card>
           </template>
         </el-table-column>
-        <el-table-column prop="projectId" label="id" width="50"/>
+        <el-table-column prop="projectId" label="id" width="50px"/>
         <el-table-column prop="projectName" label="项目名称"/>
+        <el-table-column label="操作" width="75px">
+          <template #default="scope">
+            <el-popconfirm @confirm="onDeleteProject(scope.row.projectId)"
+                           :title="'是否删除 ' + scope.row.projectName + '?'">
+              <template #reference>
+                <el-button size="small" type="danger">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
         <el-table-column width="200" label="翻译进度">
           <template #default="scope">
             <el-progress :percentage="calcPercentage(scope.row.notCompleted, scope.row.completed)"/>
@@ -85,8 +98,9 @@
 </template>
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
-import {fileDataList, projectsDataPage} from "@/api/query";
+import {deleteFile, deleteProjects, fileDataList, projectsDataPage} from "@/api/query";
 import {useRouter} from "vue-router";
+import {message} from "@/utils/message";
 
 defineOptions({
   // name 作为一种规范最好必须写上并且和路由的name保持一致
@@ -157,6 +171,29 @@ const calcPercentage = (notCompleted: number, completed: number) => {
   return (completed / total * 100).toFixed(2);
 };
 
+//删除项目
+const onDeleteProject = (projectId: number) => {
+  deleteProjects({id: projectId}).then(res => {
+    if (res.code === 0) {
+      message('删除项目成功', {type: 'success'})
+      getData(currentPage.value, pageSize.value, form)
+    } else {
+      message(res.msg, {type: 'error'})
+    }
+  })
+}
+//删除文件
+const onDeleteFile = (fileId: number) => {
+  deleteFile({id: fileId}).then(res => {
+    if (res.code === 0) {
+      message('删除文件成功', {type: 'success'})
+      getData(currentPage.value, pageSize.value, form)
+    } else {
+      message(res.msg, {type: 'error'})
+    }
+  })
+}
+
 onMounted(() => {
 //初始化
   getData(currentPage.value, pageSize.value, form)
@@ -167,7 +204,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .pagination {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: 20px;
 }
 

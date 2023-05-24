@@ -16,4 +16,5 @@ public interface TranslateProjectsService extends IService<TranslateProjects> {
 
     List<TranslateProjects> vueSelect(ProjectsPageReqVO projectsPageReqVO);
 
+    Boolean deleteProjects(Long id);
 }

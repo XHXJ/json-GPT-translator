@@ -242,8 +242,6 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     @Override
     public CompletableFuture<Void> accessingChatGptOne(TranslationData translationData) {
         try {
-
-
             //开始翻译
             Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfig.getPromptSingleTranslations()).build();
             Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
@@ -298,14 +296,22 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
 
         OkHttpClient okHttpClient = builder.build();
         //构建客户端
-        OpenAiClient openAiClient = OpenAiClient.builder().apiKey(getOpenaiKey())
-                //自定义key的获取策略：默认KeyRandomStrategy
-                .keyStrategy(new KeyRandomStrategy()).okHttpClient(okHttpClient)
-                //自己做了代理就传代理地址，没有可不不传
-//                .apiHost("https://自己代理的服务器地址/")
-                .build();
-        //聊天模型：gpt-3.5
+
+        OpenAiClient.Builder openAiClientBuilder = OpenAiClient.builder()
+                .apiKey(getOpenaiKey())
+                .keyStrategy(new KeyRandomStrategy())
+                .okHttpClient(okHttpClient);
+
+        //如果有代理地址就设置
+        if (StringUtils.isNotBlank(chatgptConfig.getApiHost())) {
+            openAiClientBuilder.apiHost(chatgptConfig.getApiHost());
+        }
+
+        OpenAiClient openAiClient = openAiClientBuilder.build();
+
+
         ChatCompletion chatCompletion = ChatCompletion.builder()
+                .model(chatgptConfig.getModel())
                 .topP(chatgptConfig.getTopP())
                 .temperature(chatgptConfig.getTemperature())
                 .presencePenalty(chatgptConfig.getPresencePenalty())

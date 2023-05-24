@@ -6,8 +6,25 @@
   <component name="ChangeListManager">
     <list default="true" id="9ab9fc14-0b2d-4952-b61e-2e8528bb34b2" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/api/query.ts" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/api/query.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/chatgpt/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/chatgpt/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/key/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/configure/key/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/export/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/export/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/query/project/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/query/project/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator-web/src/views/query/translate/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator-web/src/views/query/translate/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/OpenaiPropertiesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/OpenaiPropertiesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/vo/ChatGptConfigVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/OpenaiProperties/vo/ChatGptConfigVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/projects/ProjectsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/projects/ProjectsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/translationdata/TranslationDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/controller/translationdata/TranslationDataController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/dal/dataobject/ChatGptReq.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/framework/chatgptconfig/ChatgptConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/framework/chatgptconfig/ChatgptConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationAsyncServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationAsyncServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/chatgpt/ChatGptTranslationServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translatefile/TranslateFileServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translateprojects/TranslateProjectsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translationdata/TranslationDataServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gpt-translator/src/main/java/com/xhxj/jsongpttranslator/service/translationdata/TranslationDataServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +130,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="npm.serve">
+  <component name="RunManager" selected="Spring Boot.JsonGptTranslatorApplication">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:5173">
       <method v="2" />
     </configuration>
@@ -180,6 +197,7 @@
       <workItem from="1684459454557" duration="335000" />
       <workItem from="1684459843443" duration="27410000" />
       <workItem from="1684720503446" duration="2726000" />
+      <workItem from="1684890579163" duration="16482000" />
     </task>
     <servers />
   </component>

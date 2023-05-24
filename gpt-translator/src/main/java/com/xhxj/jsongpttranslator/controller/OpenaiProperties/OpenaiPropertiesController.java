@@ -139,6 +139,7 @@ public class OpenaiPropertiesController {
         //将字符串转换为对象
         ChatGptConfigVo chatGptConfigVo = JSONUtil.toBean(fileAsString, ChatGptConfigVo.class);
 
+        //设置配置
         convetter(chatGptConfigVo);
 
         return CommonResult.success("导入成功");
@@ -151,6 +152,8 @@ public class OpenaiPropertiesController {
      */
     private void convetter(ChatGptConfigVo chatGptConfigVo) {
 
+        chatgptConfig.setApiHost(chatGptConfigVo.getApiHost());
+        chatgptConfig.setModel(chatGptConfigVo.getModel());
         chatgptConfig.setPromptSingleTranslations(chatGptConfigVo.getPromptSingleTranslations());
         chatgptConfig.setPromptMultipleTranslations(chatGptConfigVo.getPromptMultipleTranslations());
         chatgptConfig.setTopP(chatGptConfigVo.getTopP());

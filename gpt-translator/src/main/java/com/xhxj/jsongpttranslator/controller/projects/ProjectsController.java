@@ -13,10 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -51,6 +48,24 @@ public class ProjectsController {
             @Valid @RequestParam("projectId") Long projectId) {
         return CommonResult.success(fileService.fileListByProjectId(projectId));
     }
+
+    @DeleteMapping("/delete-projects")
+    @Operation(summary = "删除项目")
+    public CommonResult<Boolean> deleteProjects(
+            @Schema(description = "项目id", example = "1", type = "integer")
+            @Valid @RequestParam("id") Long id) {
+        return CommonResult.success(projectsService.deleteProjects(id));
+    }
+
+    @DeleteMapping("/delete-file")
+    @Operation(summary = "删除文件")
+    public CommonResult<Boolean> deleteFile(
+            @Schema(description = "文件id", example = "1", type = "integer")
+            @Valid @RequestParam("id") Long id) {
+        return CommonResult.success(fileService.deleteFile(id));
+    }
+
+
 
     @GetMapping("/vue-projects-select")
     @Operation(summary = "前端选择器按名字查询项目列表")

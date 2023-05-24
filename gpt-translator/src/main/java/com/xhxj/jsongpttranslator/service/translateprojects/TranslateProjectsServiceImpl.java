@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xhxj.jsongpttranslator.controller.projects.vo.ProjectsPageReqVO;
+import com.xhxj.jsongpttranslator.dal.dataobject.TranslateFile;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslateProjects;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.dal.hsqldb.TranslateProjectsMapper;
+import com.xhxj.jsongpttranslator.service.translatefile.TranslateFileService;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +29,9 @@ public class TranslateProjectsServiceImpl extends ServiceImpl<TranslateProjectsM
 
     @Autowired
     private TranslationDataService translationDataService;
+
+    @Autowired
+    private TranslateFileService translateFileService;
 
     @Override
     public IPage<TranslateProjects> page(ProjectsPageReqVO projectsPageReqVO) {
@@ -60,5 +65,23 @@ public class TranslateProjectsServiceImpl extends ServiceImpl<TranslateProjectsM
         LambdaQueryWrapper<TranslateProjects> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.isNotBlank(projectsPageReqVO.getProjectName()), TranslateProjects::getProjectName, projectsPageReqVO.getProjectName());
         return this.baseMapper.selectList(wrapper);
+    }
+
+    /**
+     * 删除项目
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Boolean deleteProjects(Long id) {
+        //根据项目id删除翻译数据
+        LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TranslationData::getProjectId, id);
+        translationDataService.remove(wrapper);
+        //删除项目下的文件
+        translateFileService.remove(new LambdaQueryWrapper<TranslateFile>().eq(TranslateFile::getProjectId, id));
+        //删除项目
+        return removeById(id);
     }
 }

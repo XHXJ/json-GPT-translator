@@ -30,7 +30,7 @@
                 border>
         <el-table-column prop="projectId" label="id" width="50"/>
         <el-table-column prop="projectName" label="项目名称"/>
-        <el-table-column prop="projectName" label="导出文件">
+        <el-table-column prop="projectName" label="导出文件" width="200px">
           <template #default="scope">
             <el-button size="small" @click="exportJsonFile(scope.row.projectId)">导出json</el-button>
             <el-button size="small" @click="exportExcelFile(scope.row.projectId)">导出Excel</el-button>
@@ -158,7 +158,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .pagination {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: 20px;
 }
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
 import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
+import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -38,6 +41,9 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
 
     @Resource(name = "errorData")
     private Map<Long, TranslationData> errorData;
+
+    @Autowired
+    private ChatgptConfig chatgptConfig;
 
     //程序开始的唯一标识符
     private final AtomicBoolean startFlag = new AtomicBoolean(false);
@@ -178,6 +184,24 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
         List<List<TranslationData>> resultList = new ArrayList<>();
         //翻译基准线
         int batchSize = 20;
+        //最大tokens
+        int maxTokens = 1900;
+        //最小tokens
+        int minTokens = 1500;
+        //每次循环增加的tokens
+        int addTokens = 2;
+        if ("gpt-4-32k".equals(chatgptConfig.getModel())) {
+            //如果是长文本模型，分割成200条一组
+            final int partitionSize = 200;
+            return IntStream.range(0, (list.size() + partitionSize - 1) / partitionSize)
+                    .mapToObj(i -> list.subList(i * partitionSize, Math.min(partitionSize * (i + 1), list.size()))).collect(Collectors.toList());
+        }
+        if ("gpt-4".equals(chatgptConfig.getModel())) {
+            //gpt-4 默认是8k
+            final int partitionSize = 80;
+            return IntStream.range(0, (list.size() + partitionSize - 1) / partitionSize)
+                    .mapToObj(i -> list.subList(i * partitionSize, Math.min(partitionSize * (i + 1), list.size()))).collect(Collectors.toList());
+        }
 
         int index = 0;
         while (index < list.size()) {
@@ -186,10 +210,10 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             do {
                 totalTokens = chatGptTranslationAsyncService.calculateToken(list.subList(index, Math.min(index + batchSize, list.size())));
 
-                if (totalTokens < 1500 && index + batchSize < list.size()) {
-                    batchSize += 2;
-                } else if (totalTokens > 1900) {
-                    batchSize -= 2;
+                if (totalTokens < minTokens && index + batchSize < list.size()) {
+                    batchSize += addTokens;
+                } else if (totalTokens > maxTokens) {
+                    batchSize -= addTokens;
                 } else {
                     break; // 当 totalTokens 在 1500-2000 之间时，跳出循环
                 }

@@ -3,8 +3,6 @@ package com.xhxj.jsongpttranslator.framework.chatgptconfig;
 import lombok.Data;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.Proxy;
-
 /**
  * @author:zdthm2010@gmail.com
  * @create: 2023-05-18 19:53
@@ -60,5 +58,13 @@ public class ChatgptConfig {
      * 设置代理类型 SOCKS HTTP
      */
     private String proxyType;
+
+    /**
+     * 使用模型的名称
+     */
+    private String model = "gpt-3.5-turbo";
+
+    private String apiHost;
+
 
 }

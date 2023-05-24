@@ -18,7 +18,6 @@ import com.xhxj.jsongpttranslator.framework.easyexcel.TranslatorExcelDataListene
 import com.xhxj.jsongpttranslator.service.translatefile.TranslateFileService;
 import com.xhxj.jsongpttranslator.service.translateprojects.TranslateProjectsService;
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,15 +141,15 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                 //获取文件名
                 String[] parts = zipEntry.getName().split("/");
                 String extractedFileName = parts[parts.length - 1];
-                //创建翻译文件数据
-                TranslateFile translateFile = new TranslateFile()
-                        .setProjectId(translateProjects.getProjectId())
-                        .setFileName(extractedFileName);
-                //保存文件信息
-                translateFileService.save(translateFile);
 
 
                 if (extractedFileName.toLowerCase().endsWith(".xlsx")) {
+                    //创建翻译文件数据
+                    TranslateFile translateFile = new TranslateFile()
+                            .setProjectId(translateProjects.getProjectId())
+                            .setFileName(extractedFileName);
+                    //保存文件信息
+                    translateFileService.save(translateFile);
                     //保存翻译原文数据
                     List<String> originalText = processExcelFile(zis);
                     if (originalText != null && originalText.size() != 0) {
@@ -239,8 +238,8 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
             translateFiles.forEach(o -> {
                 try {
                     //获取文件名
-                    String[] parts = o.getFileName().split("/");
-                    String extractedFileName = parts[parts.length - 1];
+                    String[] parts = o.getFileName().split("\\.");
+                    String extractedFileName = parts[parts.length - 2];
                     //创建zip文件
                     zipOutputStream.putNextEntry(new ZipEntry(extractedFileName + ".xlsx"));
 

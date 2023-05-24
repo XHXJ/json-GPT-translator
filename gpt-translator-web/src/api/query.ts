@@ -23,3 +23,14 @@ export const vueProjectsSelect = (params?: object) => {
 export const vueFileSelect = (params?: object) => {
   return http.request("get", "/api/projects/vue-file-select", {params});
 }
+
+export const deleteProjects = (params?: object) => {
+  return http.request("delete", "/api/projects/delete-projects", {params});
+}
+export const deleteFile = (params?: object) => {
+  return http.request("delete", "/api/projects/delete-file", {params});
+}
+
+export const translationDelete = (data?: object) => {
+  return http.request("delete", "/api/translation-data/delete",{data});
+}

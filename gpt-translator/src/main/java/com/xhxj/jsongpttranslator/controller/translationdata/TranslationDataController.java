@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * @author:luoshuzhong
@@ -50,6 +51,12 @@ public class TranslationDataController {
         return CommonResult.success(translationDataService.updateById(translationData));
     }
 
+    @DeleteMapping("/delete")
+    @Operation(summary = "删除翻译数据")
+    public CommonResult<Boolean> delete(@RequestBody Long[] id) {
+        return CommonResult.success(translationDataService.removeByIds(Arrays.asList(id)));
+    }
+
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "上传翻译json文件")
     public CommonResult<Integer> uploadFile(
@@ -58,7 +65,7 @@ public class TranslationDataController {
             @RequestPart(value = "file") final MultipartFile file,
             @Schema(name = "projectName", description = "项目名称", type = "string")
             @RequestParam("projectName") String projectName) {
-        return CommonResult.success(translationDataService.readJsonFile(file,projectName));
+        return CommonResult.success(translationDataService.readJsonFile(file, projectName));
     }
 
     @PostMapping(path = "/upload-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

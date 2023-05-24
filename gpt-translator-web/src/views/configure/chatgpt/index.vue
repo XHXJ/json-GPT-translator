@@ -21,6 +21,19 @@
               <el-input v-model="chagptForm.data.promptSingleTranslations" autosize type="textarea"/>
             </el-form-item>
             <el-divider/>
+            <h4>模型配置:</h4>
+            <el-form-item label="openai模型配置:">
+              <el-select v-model="chagptForm.data.model" placeholder="请选择您的gpt模型">
+                <el-option label="gpt-3.5-turbo" value="gpt-3.5-turbo" />
+                <el-option label="gpt-4" value="gpt-4" />
+                <el-option label="gpt-4-0314" value="gpt-4-0314" />
+                <el-option label="gpt-4-32k" value="gpt-4-32k" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="API代理地址:" style="width: 40%">
+              <el-input v-model="chagptForm.data.apiHost"/>
+            </el-form-item>
+            <el-divider/>
             <h4>核心配置:</h4>
             <el-form-item label="topP">
 
@@ -117,7 +130,7 @@
           <div class="file-import-export">
             <el-button @click="onAddTestDataList" type="primary" link>新增翻译数据</el-button>
           </div>
-          <el-table :data="chatGptTest.data.translationDataList" style="width: 100%" max-height="300">
+          <el-table :data="chatGptTest.data.translationDataList" style="width: 100%" >
             <el-table-column prop="id" label="id" width="100"/>
             <el-table-column prop="originalText" label="原文">
               <template #default="scope">
@@ -248,6 +261,8 @@ const chagptForm = reactive({
     proxyUlr: '',
     proxyPort: 0,
     proxyType: '',
+    model: '',
+    apiHost: ''
   }
 })
 const onTestTranslation = () => {
