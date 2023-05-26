@@ -5,7 +5,7 @@
   "HiddenSideBar": false,
   "MultiTagsCache": false,
   "KeepAlive": true,
-  "Layout": "vertical",
+  "Layout": "horizontal",
   "Theme": "default",
   "DarkMode": false,
   "Grey": false,
