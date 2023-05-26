@@ -70,8 +70,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             log.info("程序开始");
             //查询需要翻译的句子
             LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
-            wrapper.isNull(TranslationData::getTranslationText)
-                    .last("limit 1000");
+            wrapper.isNull(TranslationData::getTranslationText);
             do {
                 List<TranslationData> multipleSentences = translationDataService.list(wrapper);
                 log.info("还有{}条句子未被翻译", multipleSentences.size());
