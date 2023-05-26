@@ -169,7 +169,8 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
                         //寻找缺行的数据
                         Map<Long, TranslationData> dataById = translationData.stream()
                                 .collect(Collectors.toMap(TranslationData::getId, Function.identity()));
-                        for (TranslationData translationDatum : translationData) {
+                        for (int i = 0; i < translationData.size(); i++) {
+                            TranslationData translationDatum = translationData.get(i);
                             if (!parse.containsKey(translationDatum.getId().toString())) {
                                 log.info("缺行的数据: {}", translationDatum);
                                 missingRowData.put(translationDatum.getId(), translationDatum);
@@ -180,7 +181,9 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
                                 TranslationData prevData = dataById.getOrDefault(id - 1, null);
                                 TranslationData nextData = dataById.getOrDefault(id + 1, null);
 
+                                //宁可翻错，不可漏翻
 
+                                //在数据库中缺行的数据
                                 if (prevData != null) {
                                     log.info("上一行的数据: {}", prevData);
                                     missingRowData.put(prevData.getId(), prevData);
@@ -189,6 +192,18 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
                                 if (nextData != null) {
                                     log.info("下一行的数据: {}", nextData);
                                     missingRowData.put(nextData.getId(), nextData);
+                                }
+                                // 获取上一行和下一行，如果存在的话
+                                if (i > 0) {
+                                    TranslationData prevData1 = translationData.get(i - 1);
+                                    log.info("实际列表上一行的数据: {}", prevData);
+                                    missingRowData.put(prevData1.getId(), prevData1);
+                                }
+
+                                if (i < translationData.size() - 1) {
+                                    TranslationData nextData1 = translationData.get(i + 1);
+                                    log.info("实际列表下一行的数据: {}", nextData1);
+                                    missingRowData.put(nextData1.getId(), nextData1);
                                 }
                             }
                         }

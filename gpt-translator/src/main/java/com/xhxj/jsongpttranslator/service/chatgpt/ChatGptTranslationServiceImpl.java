@@ -141,6 +141,10 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             missingRowData.clear();
             //处理翻译错误的数据
             while (errorData.size() > 0) {
+                //程序停止翻译
+                if (!startFlag.get()) {
+                    return;
+                }
                 log.info("开始处理调用错误的数据: {} 条", errorData.size());
                 List<CompletableFuture<Void>> errorTask = new ArrayList<>(errorData.size());
                 errorData.forEach((k, v) -> errorTask.add(chatGptTranslationAsyncService.accessingChatGptOne(v)));
