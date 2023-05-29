@@ -1,7 +1,10 @@
 package com.xhxj.jsongpttranslator.framework.chatgptconfig;
 
+import com.unfbx.chatgpt.entity.edits.Edit;
 import lombok.Data;
 import org.springframework.context.annotation.Configuration;
+
+import javax.swing.*;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -64,7 +67,37 @@ public class ChatgptConfig {
      */
     private String model = "gpt-3.5-turbo";
 
+    /**
+     * 代理api地址
+     */
     private String apiHost;
+
+    /**
+     * 翻译模式
+     */
+    private String translateMode = "chatTranslationMode";
+
+
+    /**
+     * Edits模式翻译的设置
+     */
+    private String editsInstruction = "翻译JSON格式里面 value 的内容,将日文翻译成简体中文，无视特殊字符,使原文生动诱人。不管怎么样都要翻译,你必须修改原文";
+
+    /**
+     * Edits模式翻译的设置
+     */
+    private Edit.Model editsModel = Edit.Model.CODE_DAVINCI_EDIT_001;
+
+    /**
+     * Edits模式Temperature
+     */
+    private Double editsTemperature = 0.1;
+
+    /**
+     * Edits模式TopP
+     */
+    private Double editsTopP = 1d;
+
 
 
 }

@@ -1,8 +1,7 @@
-package com.xhxj.jsongpttranslator.service.chatgpt;
+package com.xhxj.jsongpttranslator.translation.async.chat;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.google.common.util.concurrent.RateLimiter;
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
@@ -18,6 +17,8 @@ import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.framework.web.exception.ServiceException;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
+import com.xhxj.jsongpttranslator.translation.ApiLimiter;
+import com.xhxj.jsongpttranslator.translation.async.OkHttpClientConfigurator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -30,14 +31,17 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.xhxj.jsongpttranslator.controller.OpenaiProperties.error.ErrorCodeConstants.OPENAIKEY_DOES_NOT_EXIST;
+import static com.xhxj.jsongpttranslator.framework.web.exception.error.ErrorCodeConstants.OPENAIKEY_DOES_NOT_EXIST;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -55,16 +59,11 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     @Autowired
     private OpenaiPropertiesService openaiPropertiesService;
 
-    private final AtomicInteger apiCallCounter = new AtomicInteger(0);
-    private final AtomicInteger apiCallRpmCounter = new AtomicInteger(0);
-    private final Object lock = new Object();
-    private long lastMinuteTimestamp = System.currentTimeMillis();
-    private static int MAX_API_CALLS_PER_MINUTE = 3000; // 每分钟的API调用限制 (RPM)
-    private static int MAX_TOKENS_PER_MINUTE = 300000; // 每分钟的令牌限制 (TPM)
-    private static int MAX_REQUESTS_PER_SECOND = 2; // 每秒最大请求速率
+    @Autowired
+    private ApiLimiter apiLimiter;
 
-    private final RateLimiter rateLimiter = RateLimiter.create(MAX_REQUESTS_PER_SECOND);
-
+    @Resource(name = "startFlag")
+    private AtomicBoolean startFlag;
 
     @Resource(name = "missingRowData")
     private Map<Long, TranslationData> missingRowData;
@@ -72,91 +71,31 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
     @Resource(name = "errorData")
     private Map<Long, TranslationData> errorData;
 
+    @Autowired
+    private OkHttpClientConfigurator okHttpClientConfigurator;
+
     /**
      * gpt配置
      */
     @Autowired
     private ChatgptConfig chatgptConfig;
 
-    /**
-     * 获得openaikey
-     */
-    private List<String> getOpenaiKey() {
-        List<OpenaiProperties> openaiPropertiesList = openaiPropertiesService.list();
-        if (openaiPropertiesList.isEmpty()) {
-            throw new ServiceException(OPENAIKEY_DOES_NOT_EXIST);
-        }
-        apiRestrictionSettings(openaiPropertiesList.size());
-
-        return openaiPropertiesList.stream().map(OpenaiProperties::getOpenaiKey).collect(Collectors.toList());
-    }
-
-    /**
-     * api限制设置
-     *
-     * @param size key的数量
-     */
-    private static void apiRestrictionSettings(int size) {
-        //设置翻译api的调用限制为key的数量倍数
-        MAX_API_CALLS_PER_MINUTE = size * 3000;
-        MAX_TOKENS_PER_MINUTE = size * 300000;
-        MAX_REQUESTS_PER_SECOND = size * 5;
-    }
-
-    /**
-     * 限制每分钟的API调用
-     *
-     * @param token 消耗的令牌
-     */
-    private void waitForApiCallAvailability(long token) {
-        rateLimiter.acquire(); // 请求一个许可证，根据当前速率限制可能需要等待
-
-        while (true) {
-            synchronized (lock) {
-                long currentTimestamp = System.currentTimeMillis();
-                if (currentTimestamp - lastMinuteTimestamp >= 60000) {
-                    // 如果已经过去一分钟，重置计数器和时间戳
-                    apiCallCounter.set(0);
-                    apiCallRpmCounter.set(0);
-                    lastMinuteTimestamp = currentTimestamp;
-                }
-                if (apiCallCounter.get() + token <= MAX_TOKENS_PER_MINUTE && apiCallRpmCounter.get() < MAX_API_CALLS_PER_MINUTE) {
-                    // 如果未超过限制，递增计数器
-                    apiCallCounter.addAndGet(Math.toIntExact(token));
-                    apiCallRpmCounter.incrementAndGet();
-                    break;
-                } else {
-                    // 如果超过限制，使线程等待直到下一分钟
-                    try {
-                        long remainingMillis = 60000 - (currentTimestamp - lastMinuteTimestamp);
-                        lock.wait(remainingMillis);
-                    } catch (InterruptedException e) {
-                        log.error("等待时线程异常退出", e);
-                    }
-                }
-            }
-        }
-    }
 
 
-    /**
-     * 报告当前api限制计数器
-     */
-//    @Scheduled(fixedRate = 10000)
-    @Override
-    public void reportCurrentApiLimitCounters() {
-        log.info("当前API限制计数器: {}", apiCallCounter.get());
-    }
 
     @Async("chatGptTaskExecutor")
     @Override
-    public CompletableFuture<Objects> accessingChatGpt(List<TranslationData> translationData) {
+    public CompletableFuture<Void> multipleTranslations(List<TranslationData> translationData) {
         try {
             //构建请求信息
             ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(getMessages(translationData));
-            log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
             //限制每分钟的API调用
-            waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
+            apiLimiter.waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
+            //如果程序停止了，那么就不再继续翻译
+            if (!startFlag.get()) {
+                return CompletableFuture.completedFuture(null);
+            }
+            log.info("当前开始翻译句子(当前开始id) : {} ,消耗tokens :{}", translationData.get(0).getId(), chatTranslationInfo.chatCompletion.tokens());
 
             ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient.chatCompletion(chatTranslationInfo.chatCompletion);
             chatCompletionResponse.getChoices().forEach(e -> {
@@ -235,6 +174,7 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         return CompletableFuture.completedFuture(null);
     }
 
+
     @NotNull
     private List<Message> getMessages(List<TranslationData> translationData) {
         //将对象转换为Map
@@ -255,17 +195,20 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
      */
     @Async("chatGptTaskExecutor")
     @Override
-    public CompletableFuture<Void> accessingChatGptOne(TranslationData translationData) {
+    public CompletableFuture<Void> singleTranslation(TranslationData translationData) {
         try {
             //开始翻译
             Message system = Message.builder().role(Message.Role.SYSTEM).content(chatgptConfig.getPromptSingleTranslations()).build();
             Message user = Message.builder().role(Message.Role.USER).content(translationData.getOriginalText()).build();
 
             ChatTranslationInfo chatTranslationInfo = getChatTranslationInfo(Arrays.asList(system, user));
-            log.info("翻译单独句子id {} ,消耗tokens :{}", translationData.getId(), chatTranslationInfo.chatCompletion().tokens());
             //限制每分钟的API调用
-            waitForApiCallAvailability(chatTranslationInfo.chatCompletion().tokens());
-
+            apiLimiter.waitForApiCallAvailability(chatTranslationInfo.chatCompletion.tokens());
+            //如果程序停止了，那么就不再继续翻译
+            if (!startFlag.get()) {
+                return CompletableFuture.completedFuture(null);
+            }
+            log.info("翻译单独句子id {} ,消耗tokens :{}", translationData.getId(), chatTranslationInfo.chatCompletion().tokens());
             ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient().chatCompletion(chatTranslationInfo.chatCompletion());
             chatCompletionResponse.getChoices().forEach(e -> {
                 log.info("收到的消息 : {}", e.getMessage().getContent());
@@ -288,34 +231,15 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
 
     @NotNull
     private ChatTranslationInfo getChatTranslationInfo(List<Message> messages) {
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
-        Proxy proxy = null;
-        //自定义代理
-        if (StringUtils.isNotBlank(chatgptConfig.getProxyUlr())) {
-            Proxy.Type proxyType = Proxy.Type.valueOf(chatgptConfig.getProxyType());
-            proxy = new Proxy(proxyType, new InetSocketAddress(chatgptConfig.getProxyUlr(), chatgptConfig.getProxyPort()));
-        }
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)//自定义日志输出
-                .addInterceptor(new OpenAiResponseInterceptor())//自定义返回值拦截
-                .connectTimeout(30, TimeUnit.SECONDS)//自定义超时时间
-                .writeTimeout(360, TimeUnit.SECONDS)//自定义超时时间
-                .readTimeout(360, TimeUnit.SECONDS);//自定义超时时间
+        OkHttpClient client = okHttpClientConfigurator.getOkHttpClient();
 
-        if (proxy != null) {
-            builder.proxy(proxy);
-        }
-
-        OkHttpClient okHttpClient = builder.build();
-        //构建客户端
 
         OpenAiClient.Builder openAiClientBuilder = OpenAiClient.builder()
-                .apiKey(getOpenaiKey())
+                .apiKey(openaiPropertiesService.getOpenaiKey())
                 .keyStrategy(new KeyRandomStrategy())
-                .okHttpClient(okHttpClient);
+                .okHttpClient(client);
 
         //如果有代理地址就设置
         if (StringUtils.isNotBlank(chatgptConfig.getApiHost())) {
@@ -335,6 +259,8 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
                 .build();
         return new ChatTranslationInfo(openAiClient, chatCompletion);
     }
+
+
 
     private record ChatTranslationInfo(OpenAiClient openAiClient, ChatCompletion chatCompletion) {
     }

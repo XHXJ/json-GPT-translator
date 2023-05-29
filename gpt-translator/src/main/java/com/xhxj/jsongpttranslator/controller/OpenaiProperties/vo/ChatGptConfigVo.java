@@ -1,11 +1,8 @@
 package com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo;
 
-import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -73,5 +70,9 @@ public class ChatGptConfigVo {
 
     private String apiHost;
 
+    /**
+     * 翻译模式
+     */
+    private String translateMode;
 
 }

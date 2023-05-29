@@ -151,7 +151,7 @@ public class OpenaiPropertiesController {
      * @param chatGptConfigVo
      */
     private void convetter(ChatGptConfigVo chatGptConfigVo) {
-
+        chatgptConfig.setTranslateMode(chatGptConfigVo.getTranslateMode());
         chatgptConfig.setApiHost(chatGptConfigVo.getApiHost());
         chatgptConfig.setModel(chatGptConfigVo.getModel());
         chatgptConfig.setPromptSingleTranslations(chatGptConfigVo.getPromptSingleTranslations());
