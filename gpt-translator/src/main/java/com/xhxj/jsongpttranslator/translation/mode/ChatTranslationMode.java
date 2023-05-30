@@ -33,9 +33,6 @@ public class ChatTranslationMode implements TranslationMode {
     @Resource(name = "errorData")
     private Map<Long, TranslationData> errorData;
 
-    @Resource(name = "startFlag")
-    private AtomicBoolean startFlag;
-
     @Autowired
     private ChatgptConfig chatgptConfig;
 

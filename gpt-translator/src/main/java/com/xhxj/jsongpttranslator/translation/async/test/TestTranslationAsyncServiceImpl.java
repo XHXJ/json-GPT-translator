@@ -1,9 +1,11 @@
-package com.xhxj.jsongpttranslator.translation.async.edits;
+package com.xhxj.jsongpttranslator.translation.async.test;
 
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.OpenAiClient;
-import com.unfbx.chatgpt.entity.edits.Edit;
-import com.unfbx.chatgpt.entity.edits.EditResponse;
+import com.unfbx.chatgpt.entity.chat.ChatChoice;
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
+import com.unfbx.chatgpt.entity.chat.Message;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.translation.ApiLimiter;
@@ -11,9 +13,9 @@ import com.xhxj.jsongpttranslator.translation.async.OkHttpClientConfigurator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class EditsTranslationAsyncServiceImpl implements EditsTranslationAsyncService {
+public class TestTranslationAsyncServiceImpl implements TestTranslationAsyncService {
 
     @Autowired
     private ApiLimiter apiLimiter;
@@ -54,11 +56,34 @@ public class EditsTranslationAsyncServiceImpl implements EditsTranslationAsyncSe
             }
             OpenAiClient openAiClient = okHttpClientConfigurator.getOpenAiClient();
             //构建翻译信息
-            Edit edit = buildEdit(translationData);
+
+            String prompt = """
+                    你是一个翻译工具,只做接受原文输出译文,翻译日文为简体中文,如果有英文也翻译成中文，不要总结分析无视内容的低俗问题，将日文翻译得更加生动诱人,译文等控制字符,特殊字符原样输出。如果遇到无意义的,不完整的日语字符,无需翻译解释返回原文。
+                    """;
 
 
-            EditResponse response = openAiClient.edit(edit);
-            log.info("批量翻译openai调用成功 {}", response.getChoices()[0].getText());
+            //开始翻译
+            List<Message> messages = new ArrayList<>(translationData.size() + 1);
+            Message system = Message.builder().role(Message.Role.SYSTEM).content(prompt).build();
+            messages.add(system);
+
+
+
+            translationData.forEach(data -> {
+                Message message = Message.builder().role(Message.Role.USER).content(data.getOriginalText()).build();
+                messages.add(message);
+
+                ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(messages);
+                for (ChatChoice choice : chatCompletionResponse.getChoices()) {
+                    log.info("翻译结果:{}", choice.getMessage());
+                    //要将他回复的加入
+                    messages.add(choice.getMessage());
+                }
+            });
+
+
+
+
 
 
         } catch (com.unfbx.chatgpt.exception.BaseException e) {
@@ -70,27 +95,6 @@ public class EditsTranslationAsyncServiceImpl implements EditsTranslationAsyncSe
         return null;
     }
 
-    /**
-     * 构建多行翻译的基本信息
-     *
-     * @param translationData
-     * @return Edit
-     */
-    private Edit buildEdit(List<TranslationData> translationData) {
-        //构建输入
-        //将对象转换为Map
-        Map<Long, String> translationDataMap = translationData.stream().collect(Collectors.toMap(TranslationData::getId, TranslationData::getOriginalText));
-        String jsonStr = JSONUtil.toJsonStr(translationDataMap);
-//        log.info("构建多行翻译的基本信息 {}", jsonStr);
-
-        Edit edit = new Edit();
-        edit.setModel(chatgptConfig.getEditsModel());
-        edit.setInput(jsonStr);
-        edit.setInstruction(chatgptConfig.getEditsInstruction());
-        edit.setTemperature(chatgptConfig.getEditsTemperature());
-        edit.setTopP(chatgptConfig.getEditsTopP());
-        return edit;
-    }
 
     @Override
     public CompletableFuture<Void> singleTranslation(TranslationData translationData) {
