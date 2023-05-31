@@ -1,6 +1,7 @@
 package com.xhxj.jsongpttranslator.service.openaiproperties;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 
 import java.util.List;
@@ -14,4 +15,9 @@ public interface OpenaiPropertiesService extends IService<OpenaiProperties> {
 
     List<String> getOpenaiKey();
 
+    /**
+     * 保存配置
+     * @param chatGptConfigVo
+     */
+    void saveConfig(ChatGptConfigVo chatGptConfigVo);
 }

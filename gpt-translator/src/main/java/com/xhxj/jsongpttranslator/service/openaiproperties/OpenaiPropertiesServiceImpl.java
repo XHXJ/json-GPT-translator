@@ -1,9 +1,12 @@
 package com.xhxj.jsongpttranslator.service.openaiproperties;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 import com.xhxj.jsongpttranslator.dal.hsqldb.OpenaiPropertiesMapper;
+import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.framework.web.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,10 @@ import static com.xhxj.jsongpttranslator.framework.web.exception.error.ErrorCode
  */
 @Service
 public class OpenaiPropertiesServiceImpl extends ServiceImpl<OpenaiPropertiesMapper, OpenaiProperties> implements OpenaiPropertiesService {
+
+    @Autowired
+    private ChatgptConfig chatgptConfig;
+
     @Override
     public List<String> getOpenaiKey() {
         List<OpenaiProperties> openaiProperties = this.baseMapper.selectList(null);
@@ -25,5 +32,21 @@ public class OpenaiPropertiesServiceImpl extends ServiceImpl<OpenaiPropertiesMap
             throw new ServiceException(OPENAIKEY_DOES_NOT_EXIST);
         }
         return openaiProperties.stream().map(OpenaiProperties::getOpenaiKey).collect(Collectors.toList());
+    }
+
+    @Override
+    public void saveConfig(ChatGptConfigVo chatGptConfigVo) {
+        chatgptConfig.setTranslateMode(chatGptConfigVo.getTranslateMode());
+        chatgptConfig.setApiHost(chatGptConfigVo.getApiHost());
+        chatgptConfig.setModel(chatGptConfigVo.getModel());
+        chatgptConfig.setPromptSingleTranslations(chatGptConfigVo.getPromptSingleTranslations());
+        chatgptConfig.setPromptMultipleTranslations(chatGptConfigVo.getPromptMultipleTranslations());
+        chatgptConfig.setTopP(chatGptConfigVo.getTopP());
+        chatgptConfig.setTemperature(chatGptConfigVo.getTemperature());
+        chatgptConfig.setPresencePenalty(chatGptConfigVo.getPresencePenalty());
+        chatgptConfig.setFrequencyPenalty(chatGptConfigVo.getFrequencyPenalty());
+        chatgptConfig.setProxyUlr(chatGptConfigVo.getProxyUlr());
+        chatgptConfig.setProxyPort(chatGptConfigVo.getProxyPort());
+        chatgptConfig.setProxyType(chatGptConfigVo.getProxyType());
     }
 }

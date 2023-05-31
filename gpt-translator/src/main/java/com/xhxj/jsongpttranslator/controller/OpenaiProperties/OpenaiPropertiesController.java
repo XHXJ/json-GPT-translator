@@ -1,5 +1,6 @@
 package com.xhxj.jsongpttranslator.controller.OpenaiProperties;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -97,7 +98,9 @@ public class OpenaiPropertiesController {
     @PutMapping("/chat-gpt-config")
     @Operation(summary = "修改gpt的设置")
     public CommonResult<String> updateChatGptConfig(@Valid @RequestBody ChatGptConfigVo newConfig) {
-        convetter(newConfig);
+        openaiPropertiesService.saveConfig(newConfig);
+        //保存gpt的配置文件
+        FileUtil.writeUtf8String(JSONUtil.toJsonStr(newConfig), "config.json");
         return CommonResult.success("修改成功");
     }
 
@@ -140,31 +143,11 @@ public class OpenaiPropertiesController {
         ChatGptConfigVo chatGptConfigVo = JSONUtil.toBean(fileAsString, ChatGptConfigVo.class);
 
         //设置配置
-        convetter(chatGptConfigVo);
+        openaiPropertiesService.saveConfig(chatGptConfigVo);
 
         return CommonResult.success("导入成功");
     }
 
-    /**
-     * 设置chatGpt的配置
-     *
-     * @param chatGptConfigVo
-     */
-    private void convetter(ChatGptConfigVo chatGptConfigVo) {
-        chatgptConfig.setTranslateMode(chatGptConfigVo.getTranslateMode());
-        chatgptConfig.setApiHost(chatGptConfigVo.getApiHost());
-        chatgptConfig.setModel(chatGptConfigVo.getModel());
-        chatgptConfig.setPromptSingleTranslations(chatGptConfigVo.getPromptSingleTranslations());
-        chatgptConfig.setPromptMultipleTranslations(chatGptConfigVo.getPromptMultipleTranslations());
-        chatgptConfig.setTopP(chatGptConfigVo.getTopP());
-        chatgptConfig.setTemperature(chatGptConfigVo.getTemperature());
-        chatgptConfig.setPresencePenalty(chatGptConfigVo.getPresencePenalty());
-        chatgptConfig.setFrequencyPenalty(chatGptConfigVo.getFrequencyPenalty());
-        chatgptConfig.setProxyUlr(chatGptConfigVo.getProxyUlr());
-        chatgptConfig.setProxyPort(chatGptConfigVo.getProxyPort());
-        chatgptConfig.setProxyType(chatGptConfigVo.getProxyType());
-
-    }
 
 
 }
