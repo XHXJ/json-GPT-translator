@@ -100,7 +100,7 @@ public class OpenaiPropertiesController {
     public CommonResult<String> updateChatGptConfig(@Valid @RequestBody ChatGptConfigVo newConfig) {
         openaiPropertiesService.saveConfig(newConfig);
         //保存gpt的配置文件
-        FileUtil.writeUtf8String(JSONUtil.toJsonStr(newConfig), "config.json");
+        FileUtil.writeUtf8String(JSONUtil.toJsonStr(newConfig), "../../../config.json");
         return CommonResult.success("修改成功");
     }
 

@@ -39,9 +39,9 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
             e.printStackTrace();
         }
         //如果配置文件存在就读取配置文件
-        if (FileUtil.exist("config.json")) {
+        if (FileUtil.exist("../../../config.json")) {
             //读取配置文件
-            String config = FileUtil.readUtf8String("config.json");
+            String config = FileUtil.readUtf8String("../../../config.json");
             //转换json对象
             ChatGptConfigVo jsonObject = JSONUtil.toBean(config, ChatGptConfigVo.class);
             log.info("读取配置文件成功:{}", jsonObject);
