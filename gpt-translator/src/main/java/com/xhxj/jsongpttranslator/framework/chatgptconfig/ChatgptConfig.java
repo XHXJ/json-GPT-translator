@@ -75,7 +75,7 @@ public class ChatgptConfig {
     /**
      * 翻译模式
      */
-    private String translateMode = "testTranslationMode";
+    private String translateMode = "chatTranslationMode";
 
 
     /**
