@@ -13,7 +13,6 @@ import com.xhxj.jsongpttranslator.translation.async.OkHttpClientConfigurator;
 import com.xhxj.jsongpttranslator.translation.async.chat.ChatGptTranslationAsyncService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -51,6 +50,9 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
     @Autowired
     private TranslationModeSwitcher translationModeSwitcher;
 
+    //翻译模式
+    private TranslationMode translationMode;
+
 
     /**
      * 停止程序
@@ -67,6 +69,18 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
         log.info("程序已经设置停止");
     }
 
+    /**
+     * 初始化翻译器
+     */
+    private void initializeTranslator() {
+        //获取翻译模式
+        translationMode = translationModeSwitcher.switchMode(chatgptConfig.getTranslateMode());
+        //开启限制器
+        apiLimiter.start();
+        //设置okhttp
+        okHttpClientConfigurator.setOkHttpClient();
+    }
+
     @Override
     @Async("taskExecutor")
     public void start() {
@@ -80,12 +94,8 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
             //查询需要翻译的句子
             LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
             wrapper.isNull(TranslationData::getTranslationText);
-            //获取翻译模式
-            TranslationMode translationMode = translationModeSwitcher.switchMode(chatgptConfig.getTranslateMode());
-            //开启限制器
-            apiLimiter.start();
-            //设置okhttp
-            okHttpClientConfigurator.setOkHttpClient();
+            //初始化翻译器
+            initializeTranslator();
 
             do {
                 List<TranslationData> multipleSentences = translationDataService.list(wrapper);
@@ -104,7 +114,7 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
                 //翻译完所有的句子
                 List<TranslationData> singleSentence = translationDataService.list(wrapper);
                 //如果还有未被翻译的句子，就单条去翻译
-                log.info("单条漏翻处理,还有{}条句子未被翻译", singleSentence.size());
+                log.info("单条翻译处理,还有{}条句子未被翻译", singleSentence.size());
                 if (singleSentence.size() == 0) {
                     return;
                 }
@@ -124,9 +134,28 @@ public class ChatGptTranslationServiceImpl implements ChatGptTranslationService 
         }
     }
 
+    @Override
+    public void translateOne(List<TranslationData> singleSentence) {
+        if (!startFlag.compareAndSet(false, true)) {
+            log.info("程序已经启动");
+            return;
+        }
+        //初始化翻译器
+        initializeTranslator();
+        //如果还有未被翻译的句子，就单条去翻译
+        log.info("单条翻译处理,还有{}条句子未被翻译", singleSentence.size());
+        if (singleSentence.size() == 0) {
+            return;
+        }
+        //单条翻译
+        translationMode.translateOne(singleSentence);
+        startFlag.set(false);
+    }
 
     @Override
     public ChatGptConfigTestRespVo testChatGptConfig(ChatGptConfigTestVo chatgptConfigVo) {
+        //设置okhttp
+        okHttpClientConfigurator.setOkHttpClient();
         return chatGptTranslationAsyncService.testChatGptConfig(chatgptConfigVo);
     }
 }

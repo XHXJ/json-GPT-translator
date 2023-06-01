@@ -6,6 +6,7 @@ import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
+import jakarta.annotation.PostConstruct;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,10 @@ public class OkHttpClientConfigurator {
 
     private OkHttpClient okHttpClient;
 
+    @PostConstruct
+    public void init() {
+        setOkHttpClient();
+    }
 
     public void setOkHttpClient() {
         Proxy proxy = null;

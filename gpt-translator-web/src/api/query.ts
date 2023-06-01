@@ -34,3 +34,7 @@ export const deleteFile = (params?: object) => {
 export const translationDelete = (data?: object) => {
   return http.request("delete", "/api/translation-data/delete",{data});
 }
+
+export const postTranslateOne = (data?: object) => {
+  return http.request("post", "/api/translation-data/one-translate",{data});
+}

@@ -15,6 +15,7 @@ import com.xhxj.jsongpttranslator.dal.dataobject.TranslateProjects;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.dal.hsqldb.TranslationDataMapper;
 import com.xhxj.jsongpttranslator.framework.easyexcel.TranslatorExcelDataListener;
+import com.xhxj.jsongpttranslator.service.chatgpt.ChatGptTranslationService;
 import com.xhxj.jsongpttranslator.service.translatefile.TranslateFileService;
 import com.xhxj.jsongpttranslator.service.translateprojects.TranslateProjectsService;
 import org.apache.commons.compress.utils.IOUtils;
@@ -54,22 +55,26 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
     @Lazy
     private TranslateFileService translateFileService;
 
+    @Autowired
+    @Lazy
+    private ChatGptTranslationService chatGptTranslationService;
+
 
     @Override
     public IPage<TranslationData> page(TranslationDataPageReqVO translationDataPageReqVO) {
-        LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
-        wrapper
-                .eq(translationDataPageReqVO.getId() != null, TranslationData::getId, translationDataPageReqVO.getId())
-                .eq(translationDataPageReqVO.getFileId() != null, TranslationData::getFileId, translationDataPageReqVO.getFileId())
-                .eq(translationDataPageReqVO.getProjectId() != null, TranslationData::getProjectId, translationDataPageReqVO.getProjectId())
-                .like(StringUtils.isNotBlank(translationDataPageReqVO.getOriginalText()), TranslationData::getOriginalText, translationDataPageReqVO.getOriginalText())
-                .like(StringUtils.isNotBlank(translationDataPageReqVO.getTranslationText()), TranslationData::getTranslationText, translationDataPageReqVO.getTranslationText())
-        ;
-        if (ObjectUtils.isNotEmpty(translationDataPageReqVO.getIsTranslation())) {
-            wrapper.isNotNull(translationDataPageReqVO.getIsTranslation(), TranslationData::getTranslationText);
-            wrapper.isNull(!translationDataPageReqVO.getIsTranslation(), TranslationData::getTranslationText);
-        }
-        return this.page(new Page<>(translationDataPageReqVO.getPageNum(), translationDataPageReqVO.getPageSize()), wrapper);
+//        LambdaQueryWrapper<TranslationData> wrapper = new LambdaQueryWrapper<>();
+//        wrapper
+//                .eq(translationDataPageReqVO.getId() != null, TranslationData::getId, translationDataPageReqVO.getId())
+//                .eq(translationDataPageReqVO.getFileId() != null, TranslationData::getFileId, translationDataPageReqVO.getFileId())
+//                .eq(translationDataPageReqVO.getProjectId() != null, TranslationData::getProjectId, translationDataPageReqVO.getProjectId())
+//                .like(StringUtils.isNotBlank(translationDataPageReqVO.getOriginalText()), TranslationData::getOriginalText, translationDataPageReqVO.getOriginalText())
+//                .like(StringUtils.isNotBlank(translationDataPageReqVO.getTranslationText()), TranslationData::getTranslationText, translationDataPageReqVO.getTranslationText())
+//        ;
+//        if (ObjectUtils.isNotEmpty(translationDataPageReqVO.getIsTranslation())) {
+//            wrapper.isNotNull(translationDataPageReqVO.getIsTranslation(), TranslationData::getTranslationText);
+//            wrapper.isNull(!translationDataPageReqVO.getIsTranslation(), TranslationData::getTranslationText);
+//        }
+        return this.baseMapper.selectTranslationDataPage(new Page<>(translationDataPageReqVO.getPageNum(), translationDataPageReqVO.getPageSize()),translationDataPageReqVO);
     }
 
     @Override
@@ -214,6 +219,16 @@ public class TranslationDataServiceImpl extends ServiceImpl<TranslationDataMappe
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 批量单个翻译
+     * @param list
+     */
+    @Override
+    public void oneTranslate(List<Long> list) {
+        //获取翻译数据
+        List<TranslationData> translationDataList = this.baseMapper.selectBatchIds(list);
+        chatGptTranslationService.translateOne(translationDataList);
+    }
 
     /**
      * 导出Excel文件

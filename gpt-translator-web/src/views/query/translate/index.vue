@@ -4,14 +4,14 @@
       <el-card>
         <el-form
           :inline="true"
-          class="bg-bg_color w-[99/100] pl-8 pt-4">
+          class="bg-bg_color w-[99/100] pl-9 pt-4">
           <el-form-item label="项目:">
             <el-select
               v-model="form.projectId"
               filterable
               remote
               reserve-keyword
-              placeholder="请选择项目"
+              placeholder="请输入项目名"
               :remote-method="projectsRemoteMethod"
               :loading="loading1"
             >
@@ -29,7 +29,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="请选择文件"
+              placeholder="请选输入文件名"
               :remote-method="fileRemoteMethod"
               :loading="loading2"
             >
@@ -44,7 +44,37 @@
         </el-form>
         <el-form
           :inline="true"
-          class="bg-bg_color w-[99/100] pl-8 pt-4"
+          class="bg-bg_color w-[99/100] pl-10 pt-4"
+        >
+
+          <el-form-item label="id：" prop="id">
+            <el-input
+              v-model="form.id"
+              placeholder="输入查询id"
+              clearable
+              class="!w-[200px]"
+            />
+          </el-form-item>
+          <el-form-item label="原文正则表达式：" prop="originalRegular">
+            <el-input
+              v-model="form.originalRegular"
+              placeholder="输入正则表达式"
+              clearable
+              class="!w-[200px]"
+            />
+          </el-form-item>
+          <el-form-item label="译文正则表达式：" prop="translationRegular">
+            <el-input
+              v-model="form.translationRegular"
+              placeholder="输入正则表达式"
+              clearable
+              class="!w-[200px]"
+            />
+          </el-form-item>
+        </el-form>
+        <el-form
+          :inline="true"
+          class="bg-bg_color w-[99/100] pl-6 pt-4"
         >
           <el-form-item label="原文：" prop="originalText">
             <el-input
@@ -90,8 +120,16 @@
             </el-button>
           </el-form-item>
           <el-form-item>
+            <el-button
+              type="success"
+              @click="translateOne"
+            >
+              批量单条翻译
+            </el-button>
+          </el-form-item>
+          <el-form-item>
             <el-popconfirm @confirm="onDeleteSelectionChangeForm"
-                           :title="'是否删除 ' + selectionChangeForm.value.length + ' 条数据?'">
+                           :title="'删除 ' + selectionChangeForm.value.length + ' 条数据?'">
               <template #reference>
                 <el-button type="danger">删除</el-button>
               </template>
@@ -105,7 +143,17 @@
       <h4 class="table-name">翻译查询:</h4>
       <el-table :data="table.data" style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="id" width="100"/>
+        <el-table-column prop="id" label="id" width="100">
+          <template #default="scope">
+            <div v-if="scope.row.id  == form.id" style="color: red">
+              {{ scope.row.id }}
+            </div>
+            <div v-else>
+              {{ scope.row.id }}
+            </div>
+          </template>
+        </el-table-column>
+        >
         <el-table-column prop="originalText" label="原文"/>
         <el-table-column prop="translationText" label="原始译文"/>
         <el-table-column prop="translationText" label="编辑译文">
@@ -141,7 +189,14 @@
 
 <script lang="ts" setup>
 import {message} from "@/utils/message";
-import {translationDataPage, translationDelete, translationUpdate, vueFileSelect, vueProjectsSelect} from '@/api/query'
+import {
+  postTranslateOne,
+  translationDataPage,
+  translationDelete,
+  translationUpdate,
+  vueFileSelect,
+  vueProjectsSelect
+} from '@/api/query'
 import {onMounted, reactive, ref} from "vue";
 import {useRoute} from "vue-router";
 
@@ -180,6 +235,10 @@ const table = reactive({
   total: 0
 })
 const form = reactive({
+  originalRegular: '',
+  translationRegular: '',
+  id: '',
+  regular: '',
   originalText: '',
   translationText: '',
   isTranslation: '',
@@ -188,17 +247,34 @@ const form = reactive({
 })
 
 const onReset = () => {
+  form.originalRegular = ''
+  form.translationRegular = ''
   form.originalText = ''
   form.translationText = ''
   form.isTranslation = ''
   form.projectId = ''
   form.fileId = ''
+  form.id = ''
   value1.value = []
   value2.value = []
 }
 const selectionChangeForm = reactive({
   value: []
 })
+
+const translateOne = () => {
+  if (selectionChangeForm.value.length === 0) {
+    message('请选择要翻译的数据', {type: 'warning'})
+    return
+  }
+  const ids = selectionChangeForm.value.map(item => item.id)
+  postTranslateOne(ids).then(res => {
+    if (res.code === 0) {
+      message(res.data, {type: 'success'})
+      onSearch()
+    }
+  })
+}
 
 //多选
 const handleSelectionChange = (val: object[]) => {

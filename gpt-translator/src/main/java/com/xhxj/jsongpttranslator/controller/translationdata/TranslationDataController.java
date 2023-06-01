@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -55,6 +56,13 @@ public class TranslationDataController {
     @Operation(summary = "删除翻译数据")
     public CommonResult<Boolean> delete(@RequestBody Long[] id) {
         return CommonResult.success(translationDataService.removeByIds(Arrays.asList(id)));
+    }
+
+    @PostMapping("/one-translate")
+    @Operation(summary = "批量单个翻译")
+    public CommonResult<String> oneTranslate(@RequestBody @NotEmpty(message = "id不能为空") Long[] id) {
+        translationDataService.oneTranslate(Arrays.asList(id));
+        return CommonResult.success("批量单个翻译成功");
     }
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

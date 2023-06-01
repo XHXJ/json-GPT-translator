@@ -6,6 +6,8 @@ import com.xhxj.jsongpttranslator.controller.translationdata.vo.TranslationDataP
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface TranslationDataService extends IService<TranslationData> {
     /**
      * 读取json文件
@@ -35,4 +37,6 @@ public interface TranslationDataService extends IService<TranslationData> {
     Integer readExcelFile(MultipartFile files, String projectName);
 
     byte[] exportExcel(Integer projects);
+
+    void oneTranslate(List<Long> list);
 }

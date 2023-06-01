@@ -27,4 +27,8 @@ public class TranslationDataPageReqVO {
     private Integer projectId;
     @Schema(description = "文件id")
     private Integer fileId;
+    @Schema(description = "译文正则表达式")
+    private String translationRegular;
+    @Schema(description = "原文正则表达式")
+    private String originalRegular;
 }

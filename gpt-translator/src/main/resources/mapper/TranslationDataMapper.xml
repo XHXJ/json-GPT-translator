@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xhxj.jsongpttranslator.dal.hsqldb.TranslationDataMapper">
+    <!--这里使用的是正则表达式，所以需要使用REGEXP_MATCHES函数可能在其他数据库中不支持-->
+    <select id="selectTranslationDataPage"
+            resultType="com.xhxj.jsongpttranslator.dal.dataobject.TranslationData">
+        SELECT * FROM TRANSLATIONS
+        <where>
+            <if test="reqVO.id != null">
+                ID BETWEEN #{reqVO.id} - #{page.size}/2 + 1 AND #{reqVO.id} + #{page.size}/2
+            </if>
+            <if test="reqVO.fileId != null">
+                AND FILE_ID = #{reqVO.fileId}
+            </if>
+            <if test="reqVO.projectId != null">
+                AND PROJECT_ID = #{reqVO.projectId}
+            </if>
+            <if test="reqVO.originalText != null and reqVO.originalText != ''">
+                AND ORIGINAL_TEXT LIKE CONCAT('%', #{reqVO.originalText}, '%')
+            </if>
+            <if test="reqVO.translationText != null and reqVO.translationText != ''">
+                AND TRANSLATION_TEXT LIKE CONCAT('%', #{reqVO.translationText}, '%')
+            </if>
+            <if test="reqVO.originalRegular != null and reqVO.originalRegular != ''">
+                AND REGEXP_MATCHES(ORIGINAL_TEXT, #{reqVO.originalRegular}) = TRUE
+            </if>
+            <if test="reqVO.translationRegular != null and reqVO.translationRegular != ''">
+                AND REGEXP_MATCHES(TRANSLATION_TEXT, #{reqVO.translationRegular}) = TRUE
+            </if>
+            <if test="reqVO.isTranslation != null">
+                <choose>
+                    <when test="reqVO.isTranslation">
+                        AND TRANSLATION_TEXT IS NOT NULL AND TRANSLATION_TEXT != ''
+                    </when>
+                    <otherwise>
+                        AND (TRANSLATION_TEXT IS NULL OR TRANSLATION_TEXT = '')
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </select>
+</mapper>
