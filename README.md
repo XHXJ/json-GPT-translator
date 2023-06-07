@@ -20,7 +20,7 @@ GPT-Translator 使用以下技术进行开发和实现：
 
 - **语言/框架**： java springboot3.0.1 vue3
 
-- **OpenAI API**：GPT-Translator 使用 OpenAI 的 GPT-3.5 进行自动翻译。
+- **OpenAI API**：GPT-Translator 使用 OpenAI 的 GPT-3.5 4.0 进行自动翻译。
 
 - **项目管理**：GPT-Translator 使用 hsqldb,mariadb 进行项目管理。
 
