@@ -1,6 +1,6 @@
 package com.xhxj.jsongpttranslator.convert;
 
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

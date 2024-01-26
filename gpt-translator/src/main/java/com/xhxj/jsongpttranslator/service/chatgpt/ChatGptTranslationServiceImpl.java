@@ -1,8 +1,8 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestRespVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;

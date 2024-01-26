@@ -1,7 +1,7 @@
 package com.xhxj.jsongpttranslator.service.openaiproperties;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 import com.xhxj.jsongpttranslator.dal.hsqldb.OpenaiPropertiesMapper;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
@@ -39,6 +39,8 @@ public class OpenaiPropertiesServiceImpl extends ServiceImpl<OpenaiPropertiesMap
         chatgptConfig.setTranslateMode(chatGptConfigVo.getTranslateMode());
         chatgptConfig.setApiHost(chatGptConfigVo.getApiHost());
         chatgptConfig.setModel(chatGptConfigVo.getModel());
+        chatgptConfig.setResponseFormat(chatGptConfigVo.getResponseFormat());
+        chatgptConfig.setPromptSingleJsonKey(chatGptConfigVo.getPromptSingleJsonKey());
         chatgptConfig.setPromptSingleTranslations(chatGptConfigVo.getPromptSingleTranslations());
         chatgptConfig.setPromptMultipleTranslations(chatGptConfigVo.getPromptMultipleTranslations());
         chatgptConfig.setTopP(chatGptConfigVo.getTopP());

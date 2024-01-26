@@ -1,9 +1,9 @@
 <template>
   <div>
     <el-card>
-      <el-tabs v-model="activeName" class="demo-tabs">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="chagpt配置" name="chagpt">
-          <el-form :model="chagptForm.data" label-width="150px">
+          <el-form :model="chagptForm.data" label-width="200px">
             <div class="file-import-export">
               <el-button type="success" @click="onSubmit">保存</el-button>
               <el-upload class="item" action="/api/openai-properties/chat-gpt-import" :on-success="getConfigData"
@@ -20,18 +20,72 @@
             <el-form-item label="单条翻译prompt:">
               <el-input v-model="chagptForm.data.promptSingleTranslations" autosize type="textarea"/>
             </el-form-item>
+            <el-form-item label="单条翻译JSON Key定义:">
+              <el-input v-model="chagptForm.data.promptSingleJsonKey" style="width: 240px"></el-input>
+              <div style="padding-left: 20px">
+                <el-tooltip placement="top">
+                  <template #content>
+                    如果response_format配置为json_object，
+                    <br/>则需要配置为你单条翻译测试返回的JSON
+                    <br/>中能获取到译文的key值，配置为空则不启用。
+                  </template>
+                  <IconifyIconOffline :icon="InfoFilled"/>
+                </el-tooltip>
+              </div>
+            </el-form-item>
             <el-divider/>
             <h4>模型配置:</h4>
             <el-form-item label="openai模型配置:">
-              <el-select v-model="chagptForm.data.model" placeholder="请选择您的gpt模型">
-                <el-option label="gpt-3.5-turbo" value="gpt-3.5-turbo" />
-                <el-option label="gpt-4" value="gpt-4" />
-                <el-option label="gpt-4-0314" value="gpt-4-0314" />
-                <el-option label="gpt-4-32k" value="gpt-4-32k" />
+              <el-select v-model="chagptForm.data.model"
+                         filterable
+                         allow-create
+                         default-first-option
+                         style="width: 240px"
+                         placeholder="请选择您的gpt模型(可自定义输入)">
+                <el-option label="gpt-3.5-turbo-1106" value="gpt-3.5-turbo-1106"/>
+                <el-option label="gpt-3.5-turbo" value="gpt-3.5-turbo"/>
+                <el-option label="gpt-3.5-turbo-16k" value="gpt-3.5-turbo-16k"/>
+                <el-option label="gpt-3.5-turbo-instruct" value="gpt-3.5-turbo-instruct"/>
+                <el-option label="gpt-3.5-turbo-0613" value="gpt-3.5-turbo-0613"/>
+                <el-option label="gpt-3.5-turbo-16k-0613" value="gpt-3.5-turbo-16k-0613"/>
+                <el-option label="gpt-3.5-turbo-0301" value="gpt-3.5-turbo-0301"/>
+                <el-option label="gpt-4-0125-preview" value="gpt-4-0125-preview"/>
+                <el-option label="gpt-4-turbo-preview" value="gpt-4-turbo-preview"/>
+                <el-option label="gpt-4-1106-preview" value="gpt-4-1106-preview"/>
+                <el-option label="gpt-4-vision-preview" value="gpt-4-vision-preview"/>
+                <el-option label="gpt-4" value="gpt-4"/>
+                <el-option label="gpt-4-0613" value="gpt-4-0613"/>
+                <el-option label="gpt-4-32k" value="gpt-4-32k"/>
+                <el-option label="gpt-4-32k-0613" value="gpt-4-32k-0613"/>
               </el-select>
+              <div style="padding-left: 20px">
+                <el-tooltip placement="top">
+                  <template #content>
+                    如果官网的模型更新，可以手动输入想要使用的模型。
+                  </template>
+                  <IconifyIconOffline :icon="InfoFilled"/>
+                </el-tooltip>
+              </div>
             </el-form-item>
-            <el-form-item label="API代理地址:" style="width: 40%">
-              <el-input v-model="chagptForm.data.apiHost"/>
+            <el-form-item label="response_format 配置:">
+              <!--              <el-input v-model="chagptForm.data.responseFormat" style="width: 240px"></el-input>-->
+              <el-radio-group v-model="chagptForm.data.responseFormat">
+                <el-radio label="" size="large">无</el-radio>
+                <el-radio label="json_object" size="large">json_object</el-radio>
+              </el-radio-group>
+              <div style="padding-left: 20px">
+                <el-tooltip placement="top">
+                  <template #content>
+                    如果选用的openai模型支持 <a style="color: red" href="https://platform.openai.com/docs/guides/text-generation/json-mode">JSON mode</a>
+                    <br/> 则选用 json_object 选项，提升翻译成功率。
+                    <br/>
+                  </template>
+                  <IconifyIconOffline :icon="InfoFilled"/>
+                </el-tooltip>
+              </div>
+            </el-form-item>
+            <el-form-item label="API代理地址:">
+              <el-input v-model="chagptForm.data.apiHost" style="width: 240px"/>
             </el-form-item>
             <el-divider/>
             <h4>核心配置:</h4>
@@ -116,13 +170,26 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="测试" name="text">
-          <el-form :model="chagptForm.data" label-width="150px">
+        <el-tab-pane label="测试" name="test">
+          <el-form :model="chagptForm.data" label-width="200px">
             <el-form-item label="多行翻译prompt:">
               <el-input v-model="chagptForm.data.promptMultipleTranslations" autosize type="textarea"/>
             </el-form-item>
             <el-form-item label="单条翻译prompt:">
               <el-input v-model="chagptForm.data.promptSingleTranslations" autosize type="textarea"/>
+            </el-form-item>
+            <el-form-item label="单条翻译JSON Key定义:">
+              <el-input v-model="chagptForm.data.promptSingleJsonKey" style="width: 240px"></el-input>
+              <div style="padding-left: 20px">
+                <el-tooltip placement="top">
+                  <template #content>
+                    如果response_format配置为json_object，
+                    <br/>则需要配置为你单条翻译测试返回的JSON
+                    <br/>中能获取到译文的key值，配置为空则不启用。
+                  </template>
+                  <IconifyIconOffline :icon="InfoFilled"/>
+                </el-tooltip>
+              </div>
             </el-form-item>
           </el-form>
           <el-divider/>
@@ -130,7 +197,7 @@
           <div class="file-import-export">
             <el-button @click="onAddTestDataList" type="primary" link>新增翻译数据</el-button>
           </div>
-          <el-table :data="chatGptTest.data.translationDataList" style="width: 100%" >
+          <el-table :data="chatGptTest.data.translationDataList" style="width: 100%">
             <el-table-column prop="id" label="id" width="100"/>
             <el-table-column prop="originalText" label="原文">
               <template #default="scope">
@@ -262,6 +329,8 @@ const chagptForm = reactive({
     proxyPort: 0,
     proxyType: '',
     model: '',
+    responseFormat: '',
+    promptSingleJsonKey: '',
     apiHost: ''
   }
 })

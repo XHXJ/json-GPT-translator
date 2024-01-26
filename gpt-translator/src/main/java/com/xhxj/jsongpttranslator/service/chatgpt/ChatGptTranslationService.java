@@ -1,8 +1,7 @@
 package com.xhxj.jsongpttranslator.service.chatgpt;
 
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestRespVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 
 import java.util.List;

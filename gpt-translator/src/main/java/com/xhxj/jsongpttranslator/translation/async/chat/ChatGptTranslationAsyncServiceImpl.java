@@ -6,15 +6,12 @@ import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
+import com.unfbx.chatgpt.entity.chat.ResponseFormat;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
-import com.unfbx.chatgpt.interceptor.OpenAILogger;
-import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
-import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestRespVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;
-import com.xhxj.jsongpttranslator.framework.web.exception.ServiceException;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import com.xhxj.jsongpttranslator.service.translationdata.TranslationDataService;
 import com.xhxj.jsongpttranslator.translation.ApiLimiter;
@@ -22,26 +19,20 @@ import com.xhxj.jsongpttranslator.translation.async.OkHttpClientConfigurator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static com.xhxj.jsongpttranslator.framework.web.exception.error.ErrorCodeConstants.OPENAIKEY_DOES_NOT_EXIST;
 
 /**
  * @author:zdthm2010@gmail.com
@@ -79,8 +70,6 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
      */
     @Autowired
     private ChatgptConfig chatgptConfig;
-
-
 
 
     @Async("chatGptTaskExecutor")
@@ -212,7 +201,13 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
             ChatCompletionResponse chatCompletionResponse = chatTranslationInfo.openAiClient().chatCompletion(chatTranslationInfo.chatCompletion());
             chatCompletionResponse.getChoices().forEach(e -> {
                 log.info("收到的消息 : {}", e.getMessage().getContent());
-                translationData.setTranslationText(e.getMessage().getContent());
+                translationData.setTranslationText(
+                        //如果配置了单条翻译JSON key设置
+                        isJsonModeAndKey() ?
+                                JSONUtil.parseObj(e.getMessage().getContent()).getStr(chatgptConfig.getPromptSingleJsonKey())
+                                :
+                                e.getMessage().getContent()
+                );
                 translationDataService.updateById(translationData);
             });
             //如果正常翻译成功要删除翻译错误的数据
@@ -227,6 +222,15 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
             errorData.put(translationData.getId(), translationData);
         }
         return CompletableFuture.completedFuture(null);
+    }
+
+    /**
+     * 判断是否启用JSON mode 模式是否设置key转换
+     *
+     * @return true 启用
+     */
+    private boolean isJsonModeAndKey() {
+        return StringUtils.isNotBlank(chatgptConfig.getResponseFormat()) && StringUtils.isNotBlank(chatgptConfig.getPromptSingleJsonKey());
     }
 
     @NotNull
@@ -257,9 +261,13 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
                 .frequencyPenalty(chatgptConfig.getFrequencyPenalty())
                 .messages(messages)
                 .build();
+
+        //如果配置了responseFormat就设置
+        if (StringUtils.isNotBlank(chatgptConfig.getResponseFormat())) {
+            chatCompletion.setResponseFormat(new ResponseFormat(chatgptConfig.getResponseFormat()));
+        }
         return new ChatTranslationInfo(openAiClient, chatCompletion);
     }
-
 
 
     private record ChatTranslationInfo(OpenAiClient openAiClient, ChatCompletion chatCompletion) {
@@ -315,7 +323,13 @@ public class ChatGptTranslationAsyncServiceImpl implements ChatGptTranslationAsy
         ChatCompletionResponse chatCompletionResponse1 = chatTranslationInfo1.openAiClient().chatCompletion(chatTranslationInfo1.chatCompletion());
         chatCompletionResponse1.getChoices().forEach(e -> {
             log.info("收到的消息 : {}", e.getMessage().getContent());
-            chatGptConfigTestRespVo.setPromptSingleTranslationsResult(e.getMessage().getContent());
+            //如果配置了单条翻译JSONkey设置
+            chatGptConfigTestRespVo.setPromptSingleTranslationsResult(
+                    isJsonModeAndKey() ?
+                            JSONUtil.parseObj(e.getMessage().getContent()).getStr(chatgptConfig.getPromptSingleJsonKey())
+                            :
+                            e.getMessage().getContent()
+            );
         });
         return chatGptConfigTestRespVo;
 

@@ -1,7 +1,7 @@
 package com.xhxj.jsongpttranslator.service.openaiproperties;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo;
+package com.xhxj.jsongpttranslator.controller.openaiproperties.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +18,11 @@ public class ChatGptConfigVo {
     @Schema(description = "单条翻译prompt定义")
     @NotBlank(message = "单条翻译prompt定义不能为空")
     private String promptSingleTranslations;
+
+    /**
+     * 单条翻译JsonKey定义
+     */
+    private String promptSingleJsonKey = "tr";
 
     /**
      * 多条翻译prompt定义
@@ -67,6 +72,13 @@ public class ChatGptConfigVo {
      * 使用模型的名称
      */
     private String model;
+
+    /**
+     * response_format 配置
+     * @ <a href="https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format">连接...</a>
+     */
+    private String responseFormat = "";
+
 
     private String apiHost;
 

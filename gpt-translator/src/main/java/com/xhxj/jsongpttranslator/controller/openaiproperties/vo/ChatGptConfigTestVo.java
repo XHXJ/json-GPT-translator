@@ -1,4 +1,4 @@
-package com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo;
+package com.xhxj.jsongpttranslator.controller.openaiproperties.vo;
 
 import com.xhxj.jsongpttranslator.dal.dataobject.TranslationData;
 import io.swagger.v3.oas.annotations.media.Schema;

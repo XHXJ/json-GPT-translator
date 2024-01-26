@@ -2,20 +2,16 @@ package com.xhxj.jsongpttranslator.application.startup;
 
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigVo;
 import com.xhxj.jsongpttranslator.service.openaiproperties.OpenaiPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
 
 /**
  * @author:zdthm2010@gmail.com

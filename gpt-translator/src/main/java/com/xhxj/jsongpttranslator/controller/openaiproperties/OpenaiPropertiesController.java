@@ -1,13 +1,13 @@
-package com.xhxj.jsongpttranslator.controller.OpenaiProperties;
+package com.xhxj.jsongpttranslator.controller.openaiproperties;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestRespVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigTestVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.ChatGptConfigVo;
-import com.xhxj.jsongpttranslator.controller.OpenaiProperties.vo.OpenaiPropertiesVO;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestRespVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigTestVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.ChatGptConfigVo;
+import com.xhxj.jsongpttranslator.controller.openaiproperties.vo.OpenaiPropertiesVO;
 import com.xhxj.jsongpttranslator.convert.ChatgptConfigConvert;
 import com.xhxj.jsongpttranslator.dal.dataobject.OpenaiProperties;
 import com.xhxj.jsongpttranslator.framework.chatgptconfig.ChatgptConfig;

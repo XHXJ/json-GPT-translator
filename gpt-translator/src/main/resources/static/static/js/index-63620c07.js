@@ -1,1 +1,0 @@
-import{d as o,c as t,e,g as s}from"./index-f675a3d8.js";const n=e("h1",null,"这是一个根据MTool和T++导出其原文用GPT翻译后输出的项目",-1),a=e("a",{href:"https://github.com/XHXJ/json-GPT-translator",style:{color:"#0034ff"}},"github地址",-1),c=[n,a],d=o({name:"Welcome",__name:"index",setup(r){return(_,l)=>(s(),t("div",null,c))}});export{d as default};
